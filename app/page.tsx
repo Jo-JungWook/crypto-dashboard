@@ -160,7 +160,7 @@ export default function CryptoDashboard() {
              ==================================================== */}
           {activePage === "dashboard" && (
             <>
-              {/* 섹션 1: 주요 가상자산 섹션 */}
+              {/* 주요 가상자산 섹션 */}
               <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner">
                 <h2 className="text-base md:text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">📊 주요 가상자산</h2>
                 <div className={`grid gap-3 md:gap-4 ${viewMode === "mobile" ? "grid-cols-2" : "grid-cols-2 lg:grid-cols-4"}`}>
@@ -385,34 +385,26 @@ export default function CryptoDashboard() {
               {/* 거시경제 핵심 금융 매트릭스 */}
               <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner space-y-4">
                 <h2 className="text-base md:text-lg font-bold text-slate-200 flex items-center gap-1.5"><Scale className="w-5 h-5 text-emerald-400" /> 거시경제 핵심 금융 매트릭스</h2>
-                
-                {/* 부모 레이아웃: 모바일에서는 1열, PC에서는 2열 종대 정렬 */}
                 <div className={`grid gap-4 ${viewMode === "mobile" ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2"}`}>
-                  
-                  {/* 💡 [모바일 버그 패치] 미국 국채 금리 카드 */}
                   <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 md:p-5 space-y-3 flex flex-col justify-between">
                     <span className="text-xs font-bold text-slate-400 block border-b border-slate-800/60 pb-2">🇺🇸 미국 국채 금리 및 등락률</span>
-                    
-                    {/* 내부 블록 레이아웃 설정: 모바일일 때는 grid-cols-1 세로 단독 배열로 전환하여 충돌을 영구 차단 */}
                     <div className={`grid gap-2 mt-1 ${viewMode === "mobile" ? "grid-cols-1" : "grid-cols-2"}`}>
                       <div className="bg-slate-950/50 p-3 rounded-lg border border-slate-800/40 flex justify-between items-center">
                         <div className="space-y-0.5">
                           <span className="text-[10px] text-slate-500 block">10년물 장기금리</span>
-                          <span className="font-mono font-black text-slate-200 text-sm">{viewMode === "mobile" ? "4.42%" : "4.42%"}</span>
+                          <span className="font-mono font-black text-slate-200 text-sm">4.42%</span>
                         </div>
                         <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/5 px-2 py-0.5 rounded font-bold flex items-center gap-0.5"><TrendingUp className="w-2.5 h-2.5" />+0.42%</span>
                       </div>
                       <div className="bg-slate-950/50 p-3 rounded-lg border border-slate-800/40 flex justify-between items-center">
                         <div className="space-y-0.5">
                           <span className="text-[10px] text-slate-500 block">2년물 단기금리</span>
-                          <span className="font-mono font-black text-slate-200 text-sm">{viewMode === "mobile" ? "4.78%" : "4.78%"}</span>
+                          <span className="font-mono font-black text-slate-200 text-sm">4.78%</span>
                         </div>
                         <span className="text-[10px] font-mono text-rose-400 bg-rose-500/5 px-2 py-0.5 rounded font-bold flex items-center gap-0.5"><TrendingDown className="w-2.5 h-2.5" />-0.15%</span>
                       </div>
                     </div>
                   </div>
-
-                  {/* 💡 [모바일 버그 패치] 연준 금리 및 FOMC 일정 카드 */}
                   <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 md:p-5 flex flex-col justify-between space-y-3">
                     <span className="text-xs font-bold text-slate-400 block border-b border-slate-800/60 pb-2">📅 연준 금리 및 FOMC 일정</span>
                     <div className="space-y-2 flex-1 flex flex-col justify-center">
@@ -426,14 +418,13 @@ export default function CryptoDashboard() {
                       </div>
                     </div>
                   </div>
-
                 </div>
               </section>
             </>
           )}
 
           {/* ====================================================
-              PAGE: 온체인 데이터 분석소
+              PAGE: 온체인 데이터 분석소 (매트릭스 + 코인글라스 버튼 이중 탑재 완료)
              ==================================================== */}
           {activePage === "onchain" && (
             <>
@@ -468,7 +459,7 @@ export default function CryptoDashboard() {
                 <div className="flex justify-center pt-2"><a href="https://t.me/sealcryptocvd" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-8 py-4 bg-gradient-to-r from-sky-500 to-blue-600 text-white font-black rounded-xl shadow-xl shadow-sky-500/20 hover:opacity-95 active:scale-95 transition-all text-sm tracking-wide">🚀 실시간 CVD / 파이어 차트 분석 피드 열기 <ExternalLink className="w-4 " /></a></div>
               </section>
 
-              {/* 실시간 청산 히트맵 매트릭스 */}
+              {/* 실시간 청산 히트맵 매트릭스 (기존의 유용한 지표 유지) */}
               <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner space-y-4">
                 <h2 className="text-base md:text-lg font-bold text-rose-500 flex items-center gap-2">
                   <Flame className="w-5 h-5 text-rose-500 animate-pulse" /> 파생상품 실시간 청산 맵 매트릭스 (Liquidation Map)
@@ -506,6 +497,31 @@ export default function CryptoDashboard() {
                       </div>
                     </div>
                   </div>
+                </div>
+              </section>
+
+              {/* 💡 [신규 추가] 이미지(image_add026.png)와 100% 동일하게 복구된 글로벌 코인글라스 허브 점프 패널 */}
+              <section className="bg-slate-900/40 border border-slate-800/60 p-6 md:p-10 rounded-2xl shadow-inner text-center space-y-6">
+                <div className="max-w-xl mx-auto space-y-3">
+                  <div className="w-12 h-12 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl flex items-center justify-center mx-auto text-emerald-400">
+                    <Layers className="w-6 h-6" />
+                  </div>
+                  <h2 className="text-base md:text-lg font-bold text-slate-200">글로벌 실시간 청산 히트맵 관측소</h2>
+                  <p className="text-xs text-slate-400 leading-relaxed px-2">
+                    크립토 파생상품 거래소들의 외부 임베딩 차단 정책 우회를 위해 독립 고해상도 다이렉트 브로커 링크 패널을 구축했습니다. 
+                    안전하게 정식 페이지에서 왜곡 없는 청산 장벽과 오더북 매물대를 추적하세요.
+                  </p>
+                </div>
+
+                <div className="flex justify-center pt-2">
+                  <a 
+                    href="https://www.coinglass.com/ko/pro/futures/LiquidationHeatMap" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-orange-600 hover:bg-orange-500 text-white font-bold rounded-xl shadow-lg shadow-orange-600/10 active:scale-95 transition-all text-sm tracking-wide"
+                  >
+                    📊 Coinglass 실시간 히트맵 이동 <ExternalLink className="w-4 h-4" />
+                  </a>
                 </div>
               </section>
 
