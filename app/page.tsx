@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { TrendingUp, TrendingDown, Monitor, Smartphone, Globe, Landmark, BarChart3, ShieldAlert, Activity, PieChart } from "lucide-react";
+import { TrendingUp, TrendingDown, Monitor, Smartphone, Globe, Landmark, BarChart3, Activity, PieChart } from "lucide-react";
 
 interface CoinData {
   id: string;
@@ -83,12 +83,13 @@ export default function CryptoDashboard() {
   }, []);
 
   const getWidthClass = () => {
-    if (viewMode === "mobile") return "max-w-[390px] border-x border-slate-800 shadow-2xl"; 
+    // 💡 모바일 화면 테스트 시 아래가 잘리지 않고 무제한 스크롤이 되도록 max-h 차단 및 수직 스크롤 오버플로우 적용
+    if (viewMode === "mobile") return "max-w-[390px] min-h-[844px] border-x border-slate-800 shadow-2xl overflow-y-auto mb-20"; 
     return "max-w-7xl"; 
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 p-4 md:p-6 font-sans pb-32 flex flex-col items-center">
+    <div className="min-h-screen bg-slate-950 text-slate-50 p-4 md:p-6 font-sans pb-40 flex flex-col items-center overflow-y-auto">
       <div className={`w-full transition-all duration-300 bg-slate-950 px-1 ${getWidthClass()}`}>
         
         {/* 헤더 */}
@@ -103,7 +104,7 @@ export default function CryptoDashboard() {
           </div>
         </header>
 
-        <main className="space-y-10">
+        <main className="space-y-10 pb-12">
           
           {/* 섹션 1: 주요 가상자산 */}
           <section>
@@ -135,34 +136,32 @@ export default function CryptoDashboard() {
             </div>
           </section>
 
-          {/* 섹션 2: 크립토 시장 지표 개편 */}
+          {/* 섹션 2: 크립토 시장 지표 */}
           <section className="space-y-6">
             <h2 className="text-base md:text-lg font-bold text-slate-200 flex items-center gap-2">
               <BarChart3 className="w-5 h-5 text-orange-500" /> 크립토 시장 지표
             </h2>
 
-            {/* 📌 그룹 A: 시장 기본 지표 (가로 3열 단독 한 줄 배치) */}
-            <div className={`grid gap-3 md:gap-4 ${viewMode === "mobile" ? "grid-cols-3 text-center" : "grid-cols-3"}`}>
-              <div className="bg-slate-900 border border-slate-800 p-3.5 rounded-xl shadow-lg">
-                <p className="text-[10px] md:text-xs text-slate-500 font-medium">크립토 총 시가총액</p>
-                <p className="text-sm md:text-xl font-mono font-bold text-slate-100 mt-1">${(stats.total_cap / 1e12).toFixed(2)}T</p>
+            {/* 그룹 A: 시장 기본 지표 */}
+            <div className="grid grid-cols-3 gap-2 md:gap-4 text-center xs:text-left">
+              <div className="bg-slate-900 border border-slate-800 p-3 rounded-xl shadow-lg">
+                <p className="text-[9px] md:text-xs text-slate-500 font-medium">크립토 총 시총</p>
+                <p className="text-xs md:text-xl font-mono font-bold text-slate-100 mt-1">${(stats.total_cap / 1e12).toFixed(2)}T</p>
               </div>
-              <div className="bg-slate-900 border border-slate-800 p-3.5 rounded-xl shadow-lg">
-                <p className="text-[10px] md:text-xs text-slate-500 font-medium">공포·탐욕 지수</p>
-                <p className={`text-sm md:text-xl font-mono font-bold mt-1 ${stats.fng >= 60 ? 'text-emerald-500' : stats.fng <= 40 ? 'text-rose-500' : 'text-yellow-500'}`}>
-                  {stats.fng} <span className="text-[9px] md:text-xs text-slate-500 font-sans font-normal">({stats.fng_text === 'Greed' ? '탐욕' : stats.fng_text === 'Extreme Greed' ? '극단적 탐욕' : '공포'})</span>
+              <div className="bg-slate-900 border border-slate-800 p-3 rounded-xl shadow-lg">
+                <p className="text-[9px] md:text-xs text-slate-500 font-medium">공포·탐욕 지수</p>
+                <p className={`text-xs md:text-xl font-mono font-bold mt-1 ${stats.fng >= 60 ? 'text-emerald-500' : stats.fng <= 40 ? 'text-rose-500' : 'text-yellow-500'}`}>
+                  {stats.fng} <span className="hidden sm:inline text-[10px] text-slate-500 font-normal">({stats.fng_text})</span>
                 </p>
               </div>
-              <div className="bg-slate-900 border border-slate-800 p-3.5 rounded-xl shadow-lg">
-                <p className="text-[10px] md:text-xs text-slate-500 font-medium">김치 프리미엄</p>
-                <p className="text-sm md:text-xl font-mono font-bold text-emerald-400 mt-1">+{stats.kimchi.toFixed(1)}%</p>
+              <div className="bg-slate-900 border border-slate-800 p-3 rounded-xl shadow-lg">
+                <p className="text-[9px] md:text-xs text-slate-500 font-medium">김치 프리미엄</p>
+                <p className="text-xs md:text-xl font-mono font-bold text-emerald-400 mt-1">+{stats.kimchi.toFixed(1)}%</p>
               </div>
             </div>
 
-            {/* 📌 그룹 B: 도미넌스 컴팩트 묶음 (레이아웃 분리) */}
+            {/* 그룹 B: 도미넌스 컴팩트 묶음 */}
             <div className={`grid gap-4 ${viewMode === "mobile" ? "grid-cols-1" : "grid-cols-3"}`}>
-              
-              {/* 주요 코인 도미넌스 묶음 (4종) */}
               <div className="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 col-span-2 space-y-3.5">
                 <p className="text-xs font-bold text-slate-400 flex items-center gap-1.5 border-b border-slate-800/60 pb-2">
                   <Activity className="w-3.5 h-3.5 text-orange-400" /> 주요 자산 도미넌스
@@ -187,7 +186,6 @@ export default function CryptoDashboard() {
                 </div>
               </div>
 
-              {/* 알트코인 시장 전체 도미넌스 묶음 (TOTAL2, TOTAL3) */}
               <div className="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 flex flex-col justify-between space-y-3.5">
                 <div>
                   <p className="text-xs font-bold text-slate-400 flex items-center gap-1.5 border-b border-slate-800/60 pb-2">
@@ -205,32 +203,59 @@ export default function CryptoDashboard() {
                   </div>
                 </div>
               </div>
-
             </div>
           </section>
 
-          {/* 하단 매크로 지표 */}
-          <section className="grid grid-cols-2 gap-4">
-             <div className="bg-slate-900/40 border border-slate-800/60 p-4 rounded-xl">
-                <h3 className="text-xs font-bold text-slate-400 flex items-center gap-1.5 mb-3"><Globe className="w-3.5 h-3.5 text-purple-400" /> 글로벌 증시</h3>
-                <div className="grid grid-cols-2 gap-2 text-[11px]">
-                   <div>나스닥100 <span className="block font-mono font-bold text-emerald-400">18,520</span></div>
-                   <div>S&P 500 <span className="block font-mono font-bold text-emerald-400">5,310</span></div>
-                </div>
-             </div>
-             <div className="bg-slate-900/40 border border-slate-800/60 p-4 rounded-xl">
-                <h3 className="text-xs font-bold text-slate-400 flex items-center gap-1.5 mb-3"><Landmark className="w-3.5 h-3.5 text-blue-400" /> 외환 및 원자재</h3>
-                <div className="grid grid-cols-2 gap-2 text-[11px]">
-                   <div>달러인덱스 <span className="block font-mono font-bold text-slate-200">104.2</span></div>
-                   <div>금 (GOLD) <span className="block font-mono font-bold text-slate-200">$2,350</span></div>
-                </div>
-             </div>
+          {/* 📌 섹션 3: 글로벌 증시 개편 (미국 4대 지수 완벽 정렬) */}
+          <section className="bg-slate-900/40 border border-slate-800/60 p-4 rounded-xl">
+            <h3 className="text-sm font-bold text-slate-200 flex items-center gap-1.5 mb-4">
+              <Globe className="w-4 h-4 text-purple-400" /> 글로벌 증시 (미국 4대 지수)
+            </h3>
+            <div className={`grid gap-3 ${viewMode === "mobile" ? "grid-cols-2" : "grid-cols-4"}`}>
+              <div className="bg-slate-900 border border-slate-800/80 p-3 rounded-lg">
+                <span className="text-[10px] text-slate-500 block font-medium">나스닥 100</span>
+                <span className="text-sm md:text-base font-mono font-bold text-emerald-400 block mt-0.5">18,520</span>
+                <span className="text-[9px] text-emerald-500 font-mono">+0.8%</span>
+              </div>
+              <div className="bg-slate-900 border border-slate-800/80 p-3 rounded-lg">
+                <span className="text-[10px] text-slate-500 block font-medium">S&P 500</span>
+                <span className="text-sm md:text-base font-mono font-bold text-emerald-400 block mt-0.5">5,310</span>
+                <span className="text-[9px] text-emerald-500 font-mono">+0.4%</span>
+              </div>
+              <div className="bg-slate-900 border border-slate-800/80 p-3 rounded-lg">
+                <span className="text-[10px] text-slate-500 block font-medium">다우존스 산업</span>
+                <span className="text-sm md:text-base font-mono font-bold text-rose-400 block mt-0.5">39,120</span>
+                <span className="text-[9px] text-rose-500 font-mono">-0.2%</span>
+              </div>
+              <div className="bg-slate-900 border border-slate-800/80 p-3 rounded-lg">
+                <span className="text-[10px] text-slate-500 block font-medium">러셀 2000 (중소형주)</span>
+                <span className="text-sm md:text-base font-mono font-bold text-emerald-400 block mt-0.5">2,085</span>
+                <span className="text-[9px] text-emerald-500 font-mono">+1.1%</span>
+              </div>
+            </div>
+          </section>
+
+          {/* 섹션 4: 외환 및 원자재 */}
+          <section className="bg-slate-900/40 border border-slate-800/60 p-4 rounded-xl">
+            <h3 className="text-sm font-bold text-slate-200 flex items-center gap-1.5 mb-4">
+              <Landmark className="w-4 h-4 text-blue-400" /> 외환 및 주요 원자재
+            </h3>
+            <div className="grid grid-cols-2 gap-3 text-[11px]">
+              <div className="bg-slate-900 border border-slate-800/80 p-3 rounded-lg">
+                <span className="text-slate-500 block">달러 인덱스 (DXY)</span>
+                <span className="text-base font-mono font-bold text-slate-200 mt-0.5 block">104.2</span>
+              </div>
+              <div className="bg-slate-900 border border-slate-800/80 p-3 rounded-lg">
+                <span className="text-slate-500 block">국제 금 (GOLD)</span>
+                <span className="text-base font-mono font-bold text-amber-400 mt-0.5 block">$2,350</span>
+              </div>
+            </div>
           </section>
 
         </main>
       </div>
 
-      {/* 🛠️ 모바일 뷰어 토글 바 */}
+      {/* 🛠️ 하단 시뮬레이터 바 */}
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900/90 backdrop-blur-md border border-slate-800 px-4 py-2.5 rounded-2xl flex items-center gap-3 shadow-2xl z-50">
         <button onClick={() => setViewMode("desktop")} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold ${viewMode === "desktop" ? "bg-emerald-500 text-slate-950" : "bg-slate-800 text-slate-400"}`}><Monitor className="w-3.5 h-3.5" /> 데스크톱</button>
         <button onClick={() => setViewMode("mobile")} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold ${viewMode === "mobile" ? "bg-emerald-500 text-slate-950" : "bg-slate-800 text-slate-400"}`}><Smartphone className="w-3.5 h-3.5" /> 모바일</button>
