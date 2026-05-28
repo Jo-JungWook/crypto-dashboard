@@ -194,13 +194,11 @@ export default function CryptoDashboard() {
                 </div>
               </section>
 
-              {/* 💡 [복구 완료] 이미지(image_ad67c1.png) 구조와 100% 일치하는 오리지널 크립토 시장 지표 및 하부 도미넌스 레이아웃 */}
+              {/* 크립토 시장 지표 */}
               <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner space-y-6">
                 <h2 className="text-base md:text-lg font-bold text-slate-200 flex items-center gap-2">
                   <BarChart3 className="w-5 h-5 text-orange-500" /> 크립토 시장 지표
                 </h2>
-                
-                {/* 상단 3열 기본 지표 */}
                 <div className="grid grid-cols-3 gap-2 md:gap-4 text-center">
                   <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-lg flex flex-col justify-between">
                     <div>
@@ -232,16 +230,12 @@ export default function CryptoDashboard() {
                   </div>
                 </div>
 
-                {/* 하단 이원화 도미넌스 및 알트 수급 그리드 */}
                 <div className={`grid gap-4 ${viewMode === "mobile" ? "grid-cols-1" : "grid-cols-3"}`}>
-                  
-                  {/* 주요 자산 도미넌스 추세 (좌측 2칸 차지) */}
                   <div className="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 col-span-2 space-y-3.5">
                     <p className="text-xs font-bold text-slate-400 flex items-center gap-1.5 border-b border-slate-800/60 pb-2">
                       <Activity className="w-3.5 h-3.5 text-orange-400" /> 주요 자산 도미넌스 추세
                     </p>
                     <div className="grid grid-cols-2 gap-4">
-                      {/* 비트코인 */}
                       <div className="bg-slate-950/40 p-3 rounded-lg border border-slate-800/40 flex justify-between items-center">
                         <div>
                           <span className="text-[10px] text-slate-500 block font-mono">비트코인 (BTC.D)</span>
@@ -249,7 +243,6 @@ export default function CryptoDashboard() {
                         </div>
                         <span className="text-[10px] font-mono text-rose-500 flex items-center gap-0.5 font-bold"><TrendingDown className="w-3 h-3" />-3.4%</span>
                       </div>
-                      {/* 이더리움 */}
                       <div className="bg-slate-950/40 p-3 rounded-lg border border-slate-800/40 flex justify-between items-center">
                         <div>
                           <span className="text-[10px] text-slate-500 block font-mono">이더리움 (ETH.D)</span>
@@ -257,7 +250,6 @@ export default function CryptoDashboard() {
                         </div>
                         <span className="text-[10px] font-mono text-rose-500 flex items-center gap-0.5 font-bold"><TrendingDown className="w-3 h-3" />-4.3%</span>
                       </div>
-                      {/* 리플 */}
                       <div className="bg-slate-950/40 p-3 rounded-lg border border-slate-800/40 flex justify-between items-center">
                         <div>
                           <span className="text-[10px] text-slate-500 block font-mono">리플 (XRP.D)</span>
@@ -265,7 +257,6 @@ export default function CryptoDashboard() {
                         </div>
                         <span className="text-[10px] font-mono text-rose-500 flex items-center gap-0.5 font-bold"><TrendingDown className="w-3 h-3" />-3.2%</span>
                       </div>
-                      {/* 솔라나 */}
                       <div className="bg-slate-950/40 p-3 rounded-lg border border-slate-800/40 flex justify-between items-center">
                         <div>
                           <span className="text-[10px] text-slate-500 block font-mono">솔라나 (SOL.D)</span>
@@ -276,13 +267,11 @@ export default function CryptoDashboard() {
                     </div>
                   </div>
 
-                  {/* 알트코인 수급 추세 (우측 1칸 차지) */}
                   <div className="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 flex flex-col justify-between space-y-3.5">
                     <p className="text-xs font-bold text-slate-400 border-b border-slate-800/60 pb-2 flex items-center gap-1.5">
                       <PieChart className="w-3.5 h-3.5 text-emerald-400" /> 알트코인 수급 추세
                     </p>
                     <div className="space-y-3 flex-1 flex flex-col justify-center">
-                      {/* TOTAL2 */}
                       <div className="bg-slate-950/40 p-3 rounded-lg border border-slate-800/40 flex justify-between items-center mb-3">
                         <div>
                           <span className="text-[10px] text-slate-500 block font-mono">TOTAL2 (비트 제외)</span>
@@ -290,7 +279,6 @@ export default function CryptoDashboard() {
                         </div>
                         <span className="text-[10px] font-mono text-rose-500 flex items-center gap-0.5 font-bold"><TrendingDown className="w-3 h-3" />-3.4%</span>
                       </div>
-                      {/* TOTAL3 */}
                       <div className="bg-slate-950/40 p-3 rounded-lg border border-slate-800/40 flex justify-between items-center">
                         <div>
                           <span className="text-[10px] text-slate-500 block font-mono">TOTAL3 (순수 알트)</span>
@@ -300,7 +288,6 @@ export default function CryptoDashboard() {
                       </div>
                     </div>
                   </div>
-
                 </div>
               </section>
 
@@ -395,36 +382,51 @@ export default function CryptoDashboard() {
                 </div>
               </section>
 
-              {/* 거시경제 금융 매트릭스 */}
+              {/* 거시경제 핵심 금융 매트릭스 */}
               <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner space-y-4">
                 <h2 className="text-base md:text-lg font-bold text-slate-200 flex items-center gap-1.5"><Scale className="w-5 h-5 text-emerald-400" /> 거시경제 핵심 금융 매트릭스</h2>
-                <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
-                  <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-2.5">
-                    <span className="text-xs font-bold text-slate-400 block border-b border-slate-800/60 pb-1">🇺🇸 미국 국채 금리 및 등락률</span>
-                    <div className="grid grid-cols-2 gap-2 mt-2">
-                      <div className="bg-slate-950/50 p-2 rounded-lg border border-slate-800/40 flex justify-between items-center">
-                        <div><span className="text-[9px] text-slate-500 block">10년물 장기금리</span><span className="font-mono font-bold text-slate-200 text-xs">4.42%</span></div>
-                        <span className="text-[9px] font-mono text-emerald-400 bg-emerald-500/5 px-1.5 py-0.5 rounded font-bold">+0.42%</span>
+                
+                {/* 부모 레이아웃: 모바일에서는 1열, PC에서는 2열 종대 정렬 */}
+                <div className={`grid gap-4 ${viewMode === "mobile" ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2"}`}>
+                  
+                  {/* 💡 [모바일 버그 패치] 미국 국채 금리 카드 */}
+                  <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 md:p-5 space-y-3 flex flex-col justify-between">
+                    <span className="text-xs font-bold text-slate-400 block border-b border-slate-800/60 pb-2">🇺🇸 미국 국채 금리 및 등락률</span>
+                    
+                    {/* 내부 블록 레이아웃 설정: 모바일일 때는 grid-cols-1 세로 단독 배열로 전환하여 충돌을 영구 차단 */}
+                    <div className={`grid gap-2 mt-1 ${viewMode === "mobile" ? "grid-cols-1" : "grid-cols-2"}`}>
+                      <div className="bg-slate-950/50 p-3 rounded-lg border border-slate-800/40 flex justify-between items-center">
+                        <div className="space-y-0.5">
+                          <span className="text-[10px] text-slate-500 block">10년물 장기금리</span>
+                          <span className="font-mono font-black text-slate-200 text-sm">{viewMode === "mobile" ? "4.42%" : "4.42%"}</span>
+                        </div>
+                        <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/5 px-2 py-0.5 rounded font-bold flex items-center gap-0.5"><TrendingUp className="w-2.5 h-2.5" />+0.42%</span>
                       </div>
-                      <div className="bg-slate-950/50 p-2 rounded-lg border border-slate-800/40 flex justify-between items-center">
-                        <div><span className="text-[9px] text-slate-500 block">2년물 단기금리</span><span className="font-mono font-bold text-slate-200 text-xs">4.78%</span></div>
-                        <span className="text-[9px] font-mono text-rose-400 bg-rose-500/5 px-1.5 py-0.5 rounded font-bold">-0.15%</span>
+                      <div className="bg-slate-950/50 p-3 rounded-lg border border-slate-800/40 flex justify-between items-center">
+                        <div className="space-y-0.5">
+                          <span className="text-[10px] text-slate-500 block">2년물 단기금리</span>
+                          <span className="font-mono font-black text-slate-200 text-sm">{viewMode === "mobile" ? "4.78%" : "4.78%"}</span>
+                        </div>
+                        <span className="text-[10px] font-mono text-rose-400 bg-rose-500/5 px-2 py-0.5 rounded font-bold flex items-center gap-0.5"><TrendingDown className="w-2.5 h-2.5" />-0.15%</span>
                       </div>
                     </div>
                   </div>
-                  <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
-                    <span className="text-xs font-bold text-slate-400 block border-b border-slate-800/60 pb-1">📅 연준 금리 및 FOMC 일정</span>
-                    <div className="space-y-1.5 mt-2">
-                      <div className="bg-slate-950/50 p-1.5 rounded border border-slate-800/40 flex justify-between items-center text-[10px]">
+
+                  {/* 💡 [모바일 버그 패치] 연준 금리 및 FOMC 일정 카드 */}
+                  <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 md:p-5 flex flex-col justify-between space-y-3">
+                    <span className="text-xs font-bold text-slate-400 block border-b border-slate-800/60 pb-2">📅 연준 금리 및 FOMC 일정</span>
+                    <div className="space-y-2 flex-1 flex flex-col justify-center">
+                      <div className="bg-slate-950/50 p-2.5 rounded border border-slate-800/40 flex justify-between items-center text-xs">
                         <span className="text-slate-400 font-semibold">직전 기준 금리</span>
-                        <span className="font-mono font-bold text-slate-200">5.25~5.50% (연속동결)</span>
+                        <span className="font-mono font-bold text-slate-100 bg-slate-900 px-2 py-0.5 rounded border border-slate-800/60">5.25~5.50% (연속동결)</span>
                       </div>
-                      <div className="bg-slate-950/50 p-1.5 rounded border border-slate-800/40 flex justify-between items-center text-[10px]">
+                      <div className="bg-slate-950/50 p-2.5 rounded border border-slate-800/40 flex justify-between items-center text-xs">
                         <span className="text-slate-400 font-semibold">차기 발표일</span>
-                        <span className="font-sans font-bold text-amber-400 flex items-center gap-1">2026.06.11 <Calendar className="w-3 h-3" /></span>
+                        <span className="font-sans font-bold text-amber-400 flex items-center gap-1 bg-amber-500/5 px-2 py-0.5 rounded border border-amber-500/10">2026.06.11 <Calendar className="w-3.5 h-3.5" /></span>
                       </div>
                     </div>
                   </div>
+
                 </div>
               </section>
             </>
@@ -460,7 +462,7 @@ export default function CryptoDashboard() {
               <section className="bg-slate-900/40 border border-slate-800/60 p-6 md:p-10 rounded-2xl shadow-inner text-center space-y-6">
                 <div className="max-w-md mx-auto space-y-3">
                   <div className="w-12 h-12 bg-sky-500/10 border border-sky-500/30 rounded-2xl flex items-center justify-center mx-auto text-sky-400"><Send className="w-6 h-6" /></div>
-                  <h2 className="text-lg md:text-xl font-bold text-slate-200 Grandma">실시간 CVD 및 파이어 차트 분석 채널</h2>
+                  <h2 className="text-lg md:text-xl font-bold text-slate-200">실시간 CVD 및 파이어 차트 분석 채널</h2>
                   <p className="text-xs text-slate-400 leading-relaxed">텔레그램 내부 보안 모듈로 인해 대시보드 인라인 임베딩이 전면 통제되었습니다. 아래 공식 다이렉트 이동 버튼을 활용하시면 고래들의 실시간 매집 구간(CVD)과 거래량별 매입 그래프 원형을 렉 없이 즉시 관측하실 수 있습니다.</p>
                 </div>
                 <div className="flex justify-center pt-2"><a href="https://t.me/sealcryptocvd" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-8 py-4 bg-gradient-to-r from-sky-500 to-blue-600 text-white font-black rounded-xl shadow-xl shadow-sky-500/20 hover:opacity-95 active:scale-95 transition-all text-sm tracking-wide">🚀 실시간 CVD / 파이어 차트 분석 피드 열기 <ExternalLink className="w-4 " /></a></div>
