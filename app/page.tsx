@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { TrendingUp, TrendingDown, Monitor, Smartphone, Globe, Landmark, BarChart3, Activity, PieChart } from "lucide-react";
+import { TrendingUp, TrendingDown, Monitor, Tablet, Smartphone, Globe, Landmark, BarChart3, Activity, PieChart } from "lucide-react";
+// 📊 차트 컴포넌트 추가
+import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 
 interface CoinData {
   id: string;
@@ -12,6 +14,7 @@ interface CoinData {
   price_change_percentage_24h: number;
   market_cap: number;
   total_volume: number;
+  sparkline_in_7d: { price: number[] }; // 차트 데이터 타입 추가
 }
 
 interface MarketStats {
@@ -33,9 +36,9 @@ export default function CryptoDashboard() {
     total_cap: 0, btc_d: 0, eth_d: 0, xrp_d: 0, sol_d: 0, total2_d: 0, total3_d: 0, fng: 50, fng_text: "로딩중", kimchi: 0
   });
   const [loading, setLoading] = useState(true);
-  const [viewMode, setViewMode] = useState<"desktop" | "mobile">("desktop");
+  // 💡 viewMode에 tablet 다시 추가
+  const [viewMode, setViewMode] = useState<"desktop" | "tablet" | "mobile">("desktop");
 
-  // 💡 영어 상태값을 깔끔한 한글로 번역해주는 헬퍼 함수 (모바일 잘림 방지)
   const translateFng = (text: string) => {
     const lower = text.toLowerCase();
     if (lower.includes("extreme greed")) return "극단적 탐욕";
@@ -47,7 +50,8 @@ export default function CryptoDashboard() {
 
   const fetchData = async () => {
     try {
-      const coinRes = await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,ripple,solana&order=market_cap_desc");
+      // 💡 차트 데이터를 가져오기 위해 주소 끝에 &sparkline=true 를 다시 추가했습니다.
+      const coinRes = await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,ripple,solana&order=market_cap_desc&sparkline=true");
       const coinData = await coinRes.json();
       setCoins(coinData);
 
@@ -76,7 +80,7 @@ export default function CryptoDashboard() {
         total2_d: 100 - btcD,
         total3_d: 100 - btcD - ethD,
         fng: parseInt(fngData.data[0].value),
-        fng_text: translateFng(fngData.data[0].value_classification), // 한글 적용
+        fng_text: translateFng(fngData.data[0].value_classification),
         kimchi: 1.5
       });
     } catch (error) {
@@ -94,10 +98,10 @@ export default function CryptoDashboard() {
 
   const getWidthClass = () => {
     if (viewMode === "mobile") return "max-w-[390px] min-h-[844px] border-x border-slate-800 shadow-2xl overflow-y-auto mb-20"; 
+    if (viewMode === "tablet") return "max-w-[768px] min-h-[1024px] border-x border-slate-800 shadow-xl overflow-y-auto mb-20"; 
     return "max-w-7xl"; 
   };
 
-  // 코인 개별 24h 변동률을 기준으로 도미넌스 추세를 유추하기 위한 매핑용 도우미
   const getCoinTrend = (id: string) => {
     const coin = coins.find(c => c.id === id);
     if (!coin) return { isUp: true, pct: "0.0" };
@@ -133,27 +137,48 @@ export default function CryptoDashboard() {
               📊 주요 가상자산
             </h2>
             <div className={`grid gap-3 md:gap-4 ${viewMode === "mobile" ? "grid-cols-2" : "grid-cols-2 lg:grid-cols-4"}`}>
-              {coins.map((coin) => (
-                <div key={coin.id} className="bg-slate-900 border border-slate-800 rounded-xl p-3.5 shadow-xl flex flex-col justify-between">
-                  <div className="flex justify-between items-center mb-1.5">
-                    <div className="flex items-center gap-1.5">
-                      <img src={coin.image} className="w-6 h-6 rounded-full" />
-                      <span className="text-[10px] text-slate-400 uppercase font-mono bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800">{coin.symbol}</span>
+              {coins.map((coin) => {
+                const isPositive = coin.price_change_percentage_24h >= 0;
+                // 차트 데이터 포맷팅
+                const chartData = coin.sparkline_in_7d?.price.map((p, index) => ({ id: index, price: p })) || [];
+
+                return (
+                  <div key={coin.id} className="bg-slate-900 border border-slate-800 rounded-xl p-3.5 shadow-xl flex flex-col justify-between">
+                    <div>
+                      <div className="flex justify-between items-center mb-1.5">
+                        <div className="flex items-center gap-1.5">
+                          <img src={coin.image} className="w-6 h-6 rounded-full" />
+                          <span className="text-[10px] text-slate-400 uppercase font-mono bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800">{coin.symbol}</span>
+                        </div>
+                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${isPositive ? 'text-emerald-500 bg-emerald-500/10' : 'text-rose-500 bg-rose-500/10'}`}>
+                          {isPositive ? "+" : ""}{coin.price_change_percentage_24h.toFixed(1)}%
+                        </span>
+                      </div>
+                      <h2 className="font-bold text-xs sm:text-sm mb-1 text-slate-300">{coin.name}</h2>
+                      <p className="text-base sm:text-lg font-mono font-bold text-slate-100 mb-2">
+                        ${coin.current_price.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                      </p>
+
+                      {/* 💡 [차트 조건부 렌더링] viewMode가 모바일이 아닐 때만 미니 차트를 띄워줍니다 */}
+                      {viewMode !== "mobile" && (
+                        <div className="w-full h-14 my-2.5 bg-slate-950/50 rounded-lg p-1.5 border border-slate-800/60">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <LineChart data={chartData}>
+                              <YAxis domain={["dataMin", "dataMax"]} hide={true} />
+                              <Line type="monotone" dataKey="price" stroke={isPositive ? "#10b981" : "#f43f5e"} strokeWidth={1.5} dot={false} />
+                            </LineChart>
+                          </ResponsiveContainer>
+                        </div>
+                      )}
                     </div>
-                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${coin.price_change_percentage_24h >= 0 ? 'text-emerald-500 bg-emerald-500/10' : 'text-rose-500 bg-rose-500/10'}`}>
-                      {coin.price_change_percentage_24h >= 0 ? "+" : ""}{coin.price_change_percentage_24h.toFixed(1)}%
-                    </span>
+
+                    <div className="grid grid-cols-2 gap-1 pt-2 border-t border-slate-800 text-[10px] text-slate-500 mt-1">
+                      <div>시총 <span className="block text-slate-400 font-mono">${(coin.market_cap / 1e9).toFixed(1)}B</span></div>
+                      <div>거래 <span className="block text-slate-400 font-mono">${(coin.total_volume / 1e9).toFixed(1)}B</span></div>
+                    </div>
                   </div>
-                  <h2 className="font-bold text-xs sm:text-sm mb-1 text-slate-300">{coin.name}</h2>
-                  <p className="text-base sm:text-lg font-mono font-bold text-slate-100 mb-2">
-                    ${coin.current_price.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                  </p>
-                  <div className="grid grid-cols-2 gap-1 pt-2 border-t border-slate-800 text-[10px] text-slate-500">
-                    <div>시총 <span className="block text-slate-400 font-mono">${(coin.market_cap / 1e9).toFixed(1)}B</span></div>
-                    <div>거래 <span className="block text-slate-400 font-mono">${(coin.total_volume / 1e9).toFixed(1)}B</span></div>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </section>
 
@@ -163,7 +188,7 @@ export default function CryptoDashboard() {
               <BarChart3 className="w-5 h-5 text-orange-500" /> 크립토 시장 지표
             </h2>
 
-            {/* 그룹 A: 시장 기본 지표 (공포탐욕지수 한글화 패치 완료) */}
+            {/* 그룹 A: 시장 기본 지표 */}
             <div className="grid grid-cols-3 gap-2 md:gap-4 text-center xs:text-left">
               <div className="bg-slate-900 border border-slate-800 p-3 rounded-xl shadow-lg">
                 <p className="text-[9px] md:text-xs text-slate-500 font-medium">크립토 총 시총</p>
@@ -181,10 +206,8 @@ export default function CryptoDashboard() {
               </div>
             </div>
 
-            {/* 그룹 B: 도미넌스 컴팩트 묶음 (상승/하락 추세 추적 장치 탑재) */}
+            {/* 그룹 B: 도미넌스 컴팩트 묶음 */}
             <div className={`grid gap-4 ${viewMode === "mobile" ? "grid-cols-1" : "grid-cols-3"}`}>
-              
-              {/* 주요 자산 도미넌스 (추세 화살표 탑재) */}
               <div className="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 col-span-2 space-y-3.5">
                 <p className="text-xs font-bold text-slate-400 flex items-center gap-1.5 border-b border-slate-800/60 pb-2">
                   <Activity className="w-3.5 h-3.5 text-orange-400" /> 주요 자산 도미넌스 추세
@@ -236,7 +259,6 @@ export default function CryptoDashboard() {
                 </div>
               </div>
 
-              {/* 알트코인 마켓 캡 비중 추세 (TOTAL2, TOTAL3 추세 탑재) */}
               <div className="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 flex flex-col justify-between space-y-3.5">
                 <div>
                   <p className="text-xs font-bold text-slate-400 flex items-center gap-1.5 border-b border-slate-800/60 pb-2">
@@ -266,7 +288,6 @@ export default function CryptoDashboard() {
                   </div>
                 </div>
               </div>
-
             </div>
           </section>
 
@@ -319,9 +340,10 @@ export default function CryptoDashboard() {
         </main>
       </div>
 
-      {/* 하단 제어 바 */}
+      {/* 🛠️ 하단 시뮬레이터 바 (태블릿 버튼 완벽 복구 완료) */}
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900/90 backdrop-blur-md border border-slate-800 px-4 py-2.5 rounded-2xl flex items-center gap-3 shadow-2xl z-50">
         <button onClick={() => setViewMode("desktop")} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold ${viewMode === "desktop" ? "bg-emerald-500 text-slate-950" : "bg-slate-800 text-slate-400"}`}><Monitor className="w-3.5 h-3.5" /> 데스크톱</button>
+        <button onClick={() => setViewMode("tablet")} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold ${viewMode === "tablet" ? "bg-emerald-500 text-slate-950" : "bg-slate-800 text-slate-400"}`}><Tablet className="w-3.5 h-3.5" /> 태블릿</button>
         <button onClick={() => setViewMode("mobile")} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold ${viewMode === "mobile" ? "bg-emerald-500 text-slate-950" : "bg-slate-800 text-slate-400"}`}><Smartphone className="w-3.5 h-3.5" /> 모바일</button>
       </div>
     </div>
