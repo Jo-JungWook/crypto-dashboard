@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { 
   TrendingUp, TrendingDown, Monitor, Tablet, Smartphone, Globe, Landmark, 
   BarChart3, Activity, PieChart, Coins, Flame, Building2, ArrowUpDown, 
-  Menu, X, LayoutDashboard, Database, Zap, Layers
+  Menu, X, LayoutDashboard, Database, Zap, Layers, ExternalLink
 } from "lucide-react";
 
 interface CoinData {
@@ -60,7 +60,7 @@ export default function CryptoDashboard() {
 
   const fetchData = async () => {
     try {
-      const coinRes = await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,ripple,solana,tether,usd-coin&order=market_cap_desc&sparkline=true");
+      const coinRes = await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,ripple,solana,tether,usd-coin&order=market_cap_desc");
       const allCoinData = await coinRes.json();
       
       const mainFour = allCoinData.filter((c: any) => ["bitcoin", "ethereum", "ripple", "solana"].includes(c.id));
@@ -169,7 +169,7 @@ export default function CryptoDashboard() {
               </nav>
             </div>
             <div className="text-[11px] text-slate-600 font-mono text-center border-t border-slate-800/60 pt-4">
-              Professional Trading Hub v3.0
+              Professional Trading Hub v3.1
             </div>
           </div>
           <div className="flex-1" onClick={() => setIsMenuOpen(false)}></div>
@@ -200,7 +200,9 @@ export default function CryptoDashboard() {
 
         <main className="space-y-8 pb-12">
           
-          {/* PAGE LAYOUT A: 매크로 대시보드 레이어 */}
+          {/* ====================================================
+              PAGE LAYOUT A: 매크로 종합 대시보드 레이어
+             ==================================================== */}
           {activePage === "dashboard" && (
             <>
               {/* 주요 가상자산 */}
@@ -521,9 +523,9 @@ export default function CryptoDashboard() {
             </>
           )}
 
-          {/* ----------------------------------------------------
-              📌 PAGE LAYOUT B: 파생상품 및 코인글라스 실시간 위젯 레이어
-             ---------------------------------------------------- */}
+          {/* ====================================================
+              ⚙️ PAGE LAYOUT B: 파생상품 및 고해상도 오더 제어 레이어
+             ==================================================== */}
           {activePage === "onchain" && (
             <>
               {/* 선물 펀딩비 추적 섹션 */}
@@ -555,41 +557,37 @@ export default function CryptoDashboard() {
                 </div>
               </section>
 
-              {/* 💡 [대변신] 코인글라스 청산 히트맵 고해상도 실시간 스트리밍 프레임 임베딩 */}
-              <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner space-y-4">
-                <div className="flex justify-between items-center pb-2 border-b border-slate-800">
-                  <h2 className="text-base md:text-lg font-bold text-slate-200 flex items-center gap-2">
-                    <Layers className="w-5 h-5 text-cyan-400" /> Coinglass 실시간 청산 히트맵 내장 프레임
-                  </h2>
-                  <span className="text-[10px] text-slate-500 font-mono bg-slate-950 border border-slate-800 px-2 py-0.5 rounded">LIVE STREAM</span>
+              {/* 💡 [에러 교정 복구] 연결 거부 아이프레임을 차단하고 '원클릭 원본 다이렉트 브로커 패널'로 개편 완료 */}
+              <section className="bg-slate-900/40 border border-slate-800/60 p-5 md:p-8 rounded-2xl shadow-inner text-center space-y-6">
+                <div className="max-w-md mx-auto space-y-3">
+                  <div className="w-12 h-12 bg-cyan-500/10 border border-cyan-500/30 rounded-2xl flex items-center justify-center mx-auto text-cyan-400">
+                    <Layers className="w-6 h-6" />
+                  </div>
+                  <h2 className="text-lg md:text-xl font-bold text-slate-200">Coinglass 실시간 청산 히트맵 관측소</h2>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    코인글라스 보안 방화벽 프로토콜 보호로 인해 대시보드 내부 임베딩이 일시 차단되었습니다. 
+                    아래 실시간 허브 이동 버튼을 누르시면 롱/숏 연쇄 고레버리지 청산 매물대를 고해상도로 원형 그대로 즉시 리딩하실 수 있습니다.
+                  </p>
                 </div>
-                <p className="text-xs text-slate-400 -mt-2">코인글라스 프로 서포트 모듈을 통해 대시보드 내부에서 마우스 줌인/아웃 및 청산 매물대 스팟 실시간 추적이 가능합니다.</p>
 
-                {/* 💻 하이테크 반응형 아이프레임 샌드박스 탑재 */}
-                <div className="w-full h-[650px] bg-slate-950 rounded-xl overflow-hidden border border-slate-800 shadow-2xl relative">
-                  <iframe 
-                    src="https://www.coingecko.com/en/coins/bitcoin/usd" // 임시 백업 보완망 작동 구조
-                    srcDoc={`
-                      <html>
-                        <head>
-                          <style>
-                            body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background-color: #020617; }
-                            .container { width: 100%; height: 100%; display: flex; flex-col; justify-content: center; align-items: center; font-family: sans-serif; color: #94a3b8; }
-                            iframe { width: 100%; height: 100%; border: none; }
-                            .overlay-btn { position: absolute; top: 15px; right: 15px; background: #10b981; color: #020617; border: none; padding: 8px 14px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; text-decoration: none; box-shadow: 0 4px 14px rgba(16,185,129,0.4); }
-                          </style>
-                        </head>
-                        <body>
-                          <a href="https://www.coinglass.com/ko/pro/futures/LiquidationHeatMap" target="_blank" class="overlay-btn">원본 실시간 맵 새창 열기</a>
-                          <iframe src="https://open-profit.com/widget/liquidation-heatmap?theme=dark" allowfullscreen></iframe>
-                        </body>
-                      </html>
-                    `}
-                    className="w-full h-full"
-                    title="Coinglass Liquidation Heatmap Broker"
-                    loading="lazy"
-                    sandbox="allow-scripts allow-same-origin allow-popups"
-                  />
+                {/* 🚀 트레이더 전용 원클릭 다이렉트 링크 점프 컴포넌트 */}
+                <div className="flex flex-col sm:flex-row gap-3 justify-center items-center max-w-xl mx-auto pt-2">
+                  <a 
+                    href="https://www.coinglass.com/ko/pro/futures/LiquidationHeatMap" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-slate-950 font-bold rounded-xl shadow-lg shadow-emerald-500/20 hover:opacity-90 active:scale-95 transition-all text-sm"
+                  >
+                    🔥 Coinglass 실시간 히트맵 허브 가기 <ExternalLink className="w-4 h-4" />
+                  </a>
+                  <a 
+                    href="https://open-profit.com/widget/liquidation-heatmap?theme=dark" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold rounded-xl active:scale-95 transition-all text-sm"
+                  >
+                    📊 보조 청산 오더북 단독창 열기
+                  </a>
                 </div>
               </section>
             </>
@@ -598,7 +596,7 @@ export default function CryptoDashboard() {
         </main>
       </div>
 
-      {/* 하단 시뮬레이터 바 */}
+      {/* 하단 제어 바 */}
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900/90 backdrop-blur-md border border-slate-800 px-4 py-2.5 rounded-2xl flex items-center gap-3 shadow-2xl z-50">
         <button onClick={() => setViewMode("desktop")} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold ${viewMode === "desktop" ? "bg-emerald-500 text-slate-950" : "bg-slate-800 text-slate-400"}`}><Monitor className="w-3.5 h-3.5" /> 데스크톱</button>
         <button onClick={() => setViewMode("tablet")} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold ${viewMode === "tablet" ? "bg-emerald-500 text-slate-950" : "bg-slate-800 text-slate-400"}`}><Tablet className="w-3.5 h-3.5" /> 태블릿</button>
