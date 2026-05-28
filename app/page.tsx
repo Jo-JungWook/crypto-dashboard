@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { TrendingUp, TrendingDown, Monitor, Tablet, Smartphone, Globe, Landmark, BarChart3, Activity, PieChart, Coins } from "lucide-react";
+import { TrendingUp, TrendingDown, Monitor, Tablet, Smartphone, Globe, Landmark, BarChart3, Activity, PieChart, Coins, Flame } from "lucide-react";
 
 interface CoinData {
   id: string;
@@ -25,15 +25,15 @@ interface MarketStats {
   fng: number;
   fng_text: string;
   kimchi: number;
-  usdt_krw: number;
-  usdc_krw: number;
+  usdt_usd: number; // 💡 순수 달러 가격으로 변경
+  usdc_usd: number; // 💡 순수 달러 가격으로 변경
 }
 
 export default function CryptoDashboard() {
   const [displayCoins, setDisplayCoins] = useState<CoinData[]>([]);
   const [stats, setStats] = useState<MarketStats>({
     total_cap: 0, btc_d: 0, eth_d: 0, xrp_d: 0, sol_d: 0, total2_d: 0, total3_d: 0, fng: 50, fng_text: "로딩중", kimchi: 1.2,
-    usdt_krw: 1522, usdc_krw: 1522
+    usdt_usd: 1.00, usdc_usd: 1.00
   });
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<"desktop" | "tablet" | "mobile">("desktop");
@@ -76,12 +76,6 @@ export default function CryptoDashboard() {
       const xrpD = xrp ? (xrp.market_cap / totalCap) * 100 : 0;
       const solD = sol ? (sol.market_cap / totalCap) * 100 : 0;
 
-      const currentKimchi = 1.2; 
-      const kimchiMultiplier = 1 + (currentKimchi / 100);
-
-      const realUsdtKrw = usdtItem ? usdtItem.current_price * usdToKrwRate * kimchiMultiplier : usdToKrwRate * kimchiMultiplier;
-      const realUsdcKrw = usdcItem ? usdcItem.current_price * usdToKrwRate * kimchiMultiplier : usdToKrwRate * kimchiMultiplier;
-
       setStats({
         total_cap: totalCap,
         btc_d: btcD,
@@ -92,9 +86,9 @@ export default function CryptoDashboard() {
         total3_d: 100 - btcD - ethD,
         fng: parseInt(fngData.data[0].value),
         fng_text: translateFng(fngData.data[0].value_classification),
-        kimchi: currentKimchi,
-        usdt_krw: realUsdtKrw,
-        usdc_krw: realUsdcKrw
+        kimchi: 1.2,
+        usdt_usd: usdtItem ? usdtItem.current_price : 1.0000, // 💡 보정가 없이 순수 가격 매칭
+        usdc_usd: usdcItem ? usdcItem.current_price : 1.0000  // 💡 보정가 없이 순수 가격 매칭
       });
     } catch (error) {
       console.error("데이터 로드 중 에러 발생:", error);
@@ -296,14 +290,16 @@ export default function CryptoDashboard() {
                 <span className="text-[9px] text-rose-500 font-mono">+0.18%</span>
               </div>
               <div className="bg-slate-900 border border-slate-800/80 p-3.5 rounded-lg">
-                <span className="text-[10px] text-emerald-400 block font-medium">테더 (USDT) 국내 가격</span>
-                <span className="text-base md:text-lg font-mono font-bold text-slate-100 block mt-0.5">{Math.floor(stats.usdt_krw).toLocaleString()} 원</span>
-                <span className="text-[9px] text-slate-500 font-sans">환율 + 김치프리미엄 보정가</span>
+                <span className="text-[10px] text-emerald-400 block font-medium">테더 (USDT) 달러 가격</span>
+                {/* 💡 [수정] 김프 연동을 해제하고 소수점 4자리 순수 달러 페깅 가격 추적 */}
+                <span className="text-base md:text-lg font-mono font-bold text-slate-100 block mt-0.5">${stats.usdt_usd.toFixed(4)} USD</span>
+                <span className="text-[9px] text-slate-500 font-sans">실시간 달러 페깅 모니터링</span>
               </div>
               <div className="bg-slate-900 border border-slate-800/80 p-3.5 rounded-lg">
-                <span className="text-[10px] text-blue-400 block font-medium">써클 (USDC) 국내 가격</span>
-                <span className="text-base md:text-lg font-mono font-bold text-slate-100 block mt-0.5">{Math.floor(stats.usdc_krw).toLocaleString()} 원</span>
-                <span className="text-[9px] text-slate-500 font-sans">환율 + 김치프리미엄 보정가</span>
+                <span className="text-[10px] text-blue-400 block font-medium">써클 (USDC) 달러 가격</span>
+                {/* 💡 [수정] 김프 연동을 해제하고 소수점 4자리 순수 달러 페깅 가격 추적 */}
+                <span className="text-base md:text-lg font-mono font-bold text-slate-100 block mt-0.5">${stats.usdc_usd.toFixed(4)} USD</span>
+                <span className="text-[9px] text-slate-500 font-sans">실시간 달러 페깅 모니터링</span>
               </div>
             </div>
           </section>
@@ -337,19 +333,49 @@ export default function CryptoDashboard() {
             </div>
           </section>
 
-          {/* 섹션 5: 원자재 */}
-          <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner">
-            <h2 className="text-base md:text-lg font-bold text-slate-200 mb-4 flex items-center gap-1.5">
-              <Landmark className="w-5 h-5 text-amber-500" /> 주요 원자재
+          {/* 📌 [개편 완료] 섹션 5: 원자재 및 에너지 (귀금속/비철 및 에너지 완벽 격리) */}
+          <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner space-y-6">
+            <h2 className="text-base md:text-lg font-bold text-slate-200 flex items-center gap-1.5">
+              <Landmark className="w-5 h-5 text-amber-500" /> 원자재 및 에너지
             </h2>
-            <div className="grid grid-cols-2 gap-3 text-[11px]">
-              <div className="bg-slate-900 border border-slate-800/80 p-3 rounded-lg">
-                <span className="text-slate-500 block">달러 인덱스 (DXY)</span>
-                <span className="text-base font-mono font-bold text-slate-200 mt-0.5 block">104.2</span>
+            
+            <div className={`grid gap-4 ${viewMode === "mobile" ? "grid-cols-1" : "grid-cols-2"}`}>
+              {/* 귀금속 / 비철금속 파트 */}
+              <div className="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 space-y-3">
+                <p className="text-xs font-bold text-slate-400 pb-1.5 border-b border-slate-800/60">
+                  ✨ 귀금속 및 비철금속
+                </p>
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/40">
+                    <span className="text-[10px] text-slate-500 block">골드 (Gold)</span>
+                    <span className="text-sm font-mono font-bold text-amber-400 block mt-0.5">$2,350.40</span>
+                  </div>
+                  <div className="bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/40">
+                    <span className="text-[10px] text-slate-500 block">은 (Silver)</span>
+                    <span className="text-sm font-mono font-bold text-slate-300 block mt-0.5">$28.35</span>
+                  </div>
+                  <div className="bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/40">
+                    <span className="text-[10px] text-slate-500 block">구리 (Copper)</span>
+                    <span className="text-sm font-mono font-bold text-orange-400 block mt-0.5">$4.65</span>
+                  </div>
+                </div>
               </div>
-              <div className="bg-slate-900 border border-slate-800/80 p-3 rounded-lg">
-                <span className="text-slate-500 block">국제 금 (GOLD)</span>
-                <span className="text-base font-mono font-bold text-amber-400 mt-0.5 block">$2,350</span>
+
+              {/* 에너지 파트 */}
+              <div className="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 space-y-3">
+                <p className="text-xs font-bold text-slate-400 pb-1.5 border-b border-slate-800/60">
+                  <Flame className="w-3.5 h-3.5 text-rose-500 inline mr-1" /> 글로벌 에너지 지표
+                </p>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/40">
+                    <span className="text-[10px] text-slate-500 block">WTI 원유 (배럴당)</span>
+                    <span className="text-sm font-mono font-bold text-slate-200 block mt-0.5">$78.42</span>
+                  </div>
+                  <div className="bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/40">
+                    <span className="text-[10px] text-slate-500 block">천연가스 (NG)</span>
+                    <span className="text-sm font-mono font-bold text-sky-400 block mt-0.5">$2.58</span>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
