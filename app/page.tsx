@@ -4,9 +4,8 @@ import { useEffect, useState } from "react";
 import { 
   TrendingUp, TrendingDown, Monitor, Tablet, Smartphone, Globe, Landmark, 
   BarChart3, Activity, PieChart, Coins, Flame, Building2, ArrowUpDown, 
-  Menu, X, LayoutDashboard, Database, ArrowRightLeft, Eye, Award, Hammer 
+  Menu, X, LayoutDashboard, Database, ArrowRightLeft, Eye, Award, Hammer, Zap, Layers
 } from "lucide-react";
-import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 
 interface CoinData {
   id: string;
@@ -45,7 +44,6 @@ export default function CryptoDashboard() {
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<"desktop" | "tablet" | "mobile">("desktop");
   
-  // 💡 햄버거 메뉴 열림/닫힘 및 현재 활성화된 페이지 컨트롤 상태값
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activePage, setActivePage] = useState<"dashboard" | "onchain">("dashboard");
 
@@ -142,7 +140,7 @@ export default function CryptoDashboard() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50 p-4 md:p-6 font-sans pb-40 flex flex-col items-center overflow-y-auto relative">
       
-      {/* 📱 햄버거 메뉴 슬라이드 오버레이 배너 */}
+      {/* 📱 햄버거 메뉴 오버레이 내비게이션 (타이틀 최적화) */}
       {isMenuOpen && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 transition-all duration-300 flex justify-start">
           <div className="w-72 bg-slate-900 border-r border-slate-800 h-full p-6 flex flex-col justify-between shadow-2xl">
@@ -166,12 +164,12 @@ export default function CryptoDashboard() {
                   onClick={() => { setActivePage("onchain"); setIsMenuOpen(false); }} 
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${activePage === "onchain" ? "bg-emerald-500 text-slate-950" : "text-slate-300 hover:bg-slate-800"}`}
                 >
-                  <Database className="w-4 h-4" /> 온체인 데이터 실시간 추적
+                  <Database className="w-4 h-4" /> 파생상품 및 유동성 지표
                 </button>
               </nav>
             </div>
             <div className="text-[11px] text-slate-600 font-mono text-center border-t border-slate-800/60 pt-4">
-              Professional Trading Hub v2.1
+              Professional Trading Hub v2.5
             </div>
           </div>
           <div className="flex-1" onClick={() => setIsMenuOpen(false)}></div>
@@ -183,7 +181,6 @@ export default function CryptoDashboard() {
         {/* 헤더 */}
         <header className="flex justify-between items-center mb-6 border-b border-slate-800 pb-5">
           <div className="flex items-center gap-3">
-            {/* 💡 [신규 추가] 상단 햄버거 메뉴 작동 버튼 */}
             <button 
               onClick={() => setIsMenuOpen(true)} 
               className="p-2 hover:bg-slate-900 border border-slate-800 rounded-xl text-slate-200 transition-all focus:scale-95"
@@ -197,14 +194,14 @@ export default function CryptoDashboard() {
           </div>
           <div className="flex items-center gap-2 text-xs text-emerald-500 font-mono bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
             <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-            {activePage === "dashboard" ? "MACRO" : "ON-CHAIN"}
+            {activePage === "dashboard" ? "MACRO" : "DERIVATIVES"}
           </div>
         </header>
 
         <main className="space-y-8 pb-12">
           
           {/* ----------------------------------------------------
-              PAGE LAYOUT A: 매크로 대시보드 레이어
+              PAGE LAYOUT A: 매크로 대시보드 레이어 (기존 내용 유지)
              ---------------------------------------------------- */}
           {activePage === "dashboard" && (
             <>
@@ -324,101 +321,101 @@ export default function CryptoDashboard() {
                         <div>
                           <span className="text-[10px] text-slate-500 block">솔라나 (SOL.D)</span>
                           <span className="text-base font-mono font-bold text-purple-400">{stats.sol_d.toFixed(1)}%</span>
-                    </div>
-                    <div className={`flex items-center gap-0.5 text-[10px] font-mono ${solTrend.isUp ? "text-emerald-500" : "text-rose-500"}`}>
-                      {solTrend.isUp ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                      {solTrend.pct}%
+                        </div>
+                        <div className={`flex items-center gap-0.5 text-[10px] font-mono ${solTrend.isUp ? "text-emerald-500" : "text-rose-500"}`}>
+                          {solTrend.isUp ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                          {solTrend.pct}%
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
 
-              <div className="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 flex flex-col justify-between space-y-3.5">
-                <div>
-                  <p className="text-xs font-bold text-slate-400 flex items-center gap-1.5 border-b border-slate-800/60 pb-2">
-                    <PieChart className="w-3.5 h-3.5 text-emerald-400" /> 알트코인 수급 추세
-                  </p>
-                  <div className="space-y-3 mt-3">
-                    <div className="bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/40 flex justify-between items-center">
-                      <div>
-                        <span className="text-[10px] text-slate-500 block">TOTAL2 (비트 제외)</span>
-                        <span className="text-base font-mono font-bold text-emerald-400">{stats.total2_d.toFixed(1)}%</span>
-                      </div>
-                      <div className={`flex items-center gap-0.5 text-[10px] font-mono ${!btcTrend.isUp ? "text-emerald-500" : "text-rose-500"}`}>
-                        {!btcTrend.isUp ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                        {btcTrend.pct}%
-                      </div>
-                    </div>
-                    <div className="bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/40 flex justify-between items-center">
-                      <div>
-                        <span className="text-[10px] text-slate-500 block">TOTAL3 (순수 알트)</span>
-                        <span className="text-base font-mono font-bold text-cyan-400">{stats.total3_d.toFixed(1)}%</span>
-                      </div>
-                      <div className={`flex items-center gap-0.5 text-[10px] font-mono ${!btcTrend.isUp && !ethTrend.isUp ? "text-emerald-500" : "text-rose-500"}`}>
-                        {!btcTrend.isUp && !ethTrend.isUp ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                        {((parseFloat(btcTrend.pct) + parseFloat(ethTrend.pct)) / -2).toFixed(1)}%
+                  <div className="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 flex flex-col justify-between space-y-3.5">
+                    <div>
+                      <p className="text-xs font-bold text-slate-400 flex items-center gap-1.5 border-b border-slate-800/60 pb-2">
+                        <PieChart className="w-3.5 h-3.5 text-emerald-400" /> 알트코인 수급 추세
+                      </p>
+                      <div className="space-y-3 mt-3">
+                        <div className="bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/40 flex justify-between items-center">
+                          <div>
+                            <span className="text-[10px] text-slate-500 block">TOTAL2 (비트 제외)</span>
+                            <span className="text-base font-mono font-bold text-emerald-400">{stats.total2_d.toFixed(1)}%</span>
+                          </div>
+                          <div className={`flex items-center gap-0.5 text-[10px] font-mono ${!btcTrend.isUp ? "text-emerald-500" : "text-rose-500"}`}>
+                            {!btcTrend.isUp ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                            {btcTrend.pct}%
+                          </div>
+                        </div>
+                        <div className="bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/40 flex justify-between items-center">
+                          <div>
+                            <span className="text-[10px] text-slate-500 block">TOTAL3 (순수 알트)</span>
+                            <span className="text-base font-mono font-bold text-cyan-400">{stats.total3_d.toFixed(1)}%</span>
+                          </div>
+                          <div className={`flex items-center gap-0.5 text-[10px] font-mono ${!btcTrend.isUp && !ethTrend.isUp ? "text-emerald-500" : "text-rose-500"}`}>
+                            {!btcTrend.isUp && !ethTrend.isUp ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                            {((parseFloat(btcTrend.pct) + parseFloat(ethTrend.pct)) / -2).toFixed(1)}%
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </section>
+              </section>
 
-          {/* 섹션 3: 기관 및 거대 자본 동향 */}
-          <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner space-y-6">
-            <h2 className="text-base md:text-lg font-bold text-slate-200 flex items-center gap-1.5">
-              <Building2 className="w-5 h-5 text-indigo-400" /> 기관 및 거대 자본 동향
-            </h2>
-            <div className={`grid gap-4 ${viewMode === "mobile" ? "grid-cols-1" : "grid-cols-3"}`}>
-              <div className="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 col-span-1 md:col-span-2 space-y-3">
-                <p className="text-xs font-bold text-slate-400 pb-1.5 border-b border-slate-800/60 flex justify-between items-center">
-                  <span>🇺🇸 미국 현물 ETF 일일 순유입액 (일일 기준)</span>
-                  <span className="text-[10px] text-slate-500 font-normal">블랙록(IBIT) 등 주요 기관</span>
-                </p>
-                <div className="grid grid-cols-3 gap-2">
-                  <div className="bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/40">
-                    <span className="text-[10px] text-slate-400 block font-medium">비트코인 ETF</span>
-                    <span className="text-sm md:text-base font-mono font-bold text-emerald-400 mt-1 block">+$142.5M</span>
-                    <span className="text-[9px] text-slate-500 block mt-0.5">3일 연속 순유입</span>
+              {/* 섹션 3: 기관 및 거대 자본 동향 */}
+              <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner space-y-6">
+                <h2 className="text-base md:text-lg font-bold text-slate-200 flex items-center gap-1.5">
+                  <Building2 className="w-5 h-5 text-indigo-400" /> 기관 및 거대 자본 동향
+                </h2>
+                <div className={`grid gap-4 ${viewMode === "mobile" ? "grid-cols-1" : "grid-cols-3"}`}>
+                  <div className="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 col-span-1 md:col-span-2 space-y-3">
+                    <p className="text-xs font-bold text-slate-400 pb-1.5 border-b border-slate-800/60 flex justify-between items-center">
+                      <span>🇺🇸 미국 현물 ETF 일일 순유입액 (일일 기준)</span>
+                      <span className="text-[10px] text-slate-500 font-normal">블랙록(IBIT) 등 주요 기관</span>
+                    </p>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/40">
+                        <span className="text-[10px] text-slate-400 block font-medium">비트코인 ETF</span>
+                        <span className="text-sm md:text-base font-mono font-bold text-emerald-400 mt-1 block">+$142.5M</span>
+                        <span className="text-[9px] text-slate-500 block mt-0.5">3일 연속 순유입</span>
+                      </div>
+                      <div className="bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/40">
+                        <span className="text-[10px] text-slate-400 block font-medium">이더리움 ETF</span>
+                        <span className="text-sm md:text-base font-mono font-bold text-rose-500 mt-1 block">-$18.2M</span>
+                        <span className="text-[9px] text-slate-500 block mt-0.5">그레이스케일 유출</span>
+                      </div>
+                      <div className="bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/40">
+                        <span className="text-[10px] text-slate-400 block font-medium">리플(XRP) ETF</span>
+                        <span className="text-sm md:text-base font-mono font-bold text-slate-300 mt-1 block">+$2.1M</span>
+                        <span className="text-[9px] text-slate-500 block mt-0.5">기관 자금 대기중</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/40">
-                    <span className="text-[10px] text-slate-400 block font-medium">이더리움 ETF</span>
-                    <span className="text-sm md:text-base font-mono font-bold text-rose-500 mt-1 block">-$18.2M</span>
-                    <span className="text-[9px] text-slate-500 block mt-0.5">그레이스케일 유출</span>
-                  </div>
-                  <div className="bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/40">
-                    <span className="text-[10px] text-slate-400 block font-medium">리플(XRP) ETF</span>
-                    <span className="text-sm md:text-base font-mono font-bold text-slate-300 mt-1 block">+$2.1M</span>
-                    <span className="text-[9px] text-slate-500 block mt-0.5">기관 자금 대기중</span>
-                  </div>
-                </div>
-              </div>
 
-              <div className="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 flex flex-col justify-between space-y-3">
-                <div>
-                  <p className="text-xs font-bold text-slate-400 pb-1.5 border-b border-slate-800/60 flex items-center justify-between">
-                    <span>📊 CME 선물 미결제약정 (OI)</span>
-                    <ArrowUpDown className="w-3 h-3 text-indigo-400" />
-                  </p>
-                  <div className="space-y-2.5 mt-2.5">
-                    <div className="bg-slate-950/40 p-2 rounded-lg border border-slate-800/40 flex justify-between items-center">
-                      <div>
-                        <span className="text-[10px] text-slate-500 block">총 미결제약정 규모</span>
-                        <span className="text-sm font-mono font-bold text-slate-200">$11.84B</span>
+                  <div className="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 flex flex-col justify-between space-y-3">
+                    <div>
+                      <p className="text-xs font-bold text-slate-400 pb-1.5 border-b border-slate-800/60 flex items-center justify-between">
+                        <span>📊 CME 선물 미결제약정 (OI)</span>
+                        <ArrowUpDown className="w-3 h-3 text-indigo-400" />
+                      </p>
+                      <div className="space-y-2.5 mt-2.5">
+                        <div className="bg-slate-950/40 p-2 rounded-lg border border-slate-800/40 flex justify-between items-center">
+                          <div>
+                            <span className="text-[10px] text-slate-500 block">총 미결제약정 규모</span>
+                            <span className="text-sm font-mono font-bold text-slate-200">$11.84B</span>
+                          </div>
+                          <span className="text-[9px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">+4.2%</span>
+                        </div>
+                        <div className="bg-slate-950/40 p-2 rounded-lg border border-slate-800/40 flex justify-between items-center">
+                          <div>
+                            <span className="text-[10px] text-slate-500 block">기관 롱/숏 포지션 비중</span>
+                            <span className="text-xs font-sans font-bold text-slate-300">롱 54% / 숏 46%</span>
+                          </div>
+                          <span className="text-[9px] font-sans text-emerald-400">우세</span>
+                        </div>
                       </div>
-                      <span className="text-[9px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">+4.2%</span>
-                    </div>
-                    <div className="bg-slate-950/40 p-2 rounded-lg border border-slate-800/40 flex justify-between items-center">
-                      <div>
-                        <span className="text-[10px] text-slate-500 block">기관 롱/숏 포지션 비중</span>
-                        <span className="text-xs font-sans font-bold text-slate-300">롱 54% / 숏 46%</span>
-                      </div>
-                      <span className="text-[9px] font-sans text-emerald-400">우세</span>
                     </div>
                   </div>
-                </div>
-              </div>
             </div>
           </section>
 
@@ -527,82 +524,92 @@ export default function CryptoDashboard() {
           )}
 
           {/* ----------------------------------------------------
-              PAGE LAYOUT B: 신규 [온체인 데이터] 전용 독립 레이어
+              📌 PAGE LAYOUT B: 개편된 [파생상품 및 유동성 지표] 레이어
              ---------------------------------------------------- */}
           {activePage === "onchain" && (
             <>
-              {/* 섹션 1: 거래소 수급 및 고래 자본 이동 */}
+              {/* 1. 선물 펀딩비 추적 섹션 */}
               <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner space-y-4">
                 <h2 className="text-base md:text-lg font-bold text-slate-200 flex items-center gap-2">
-                  <ArrowRightLeft className="w-5 h-5 text-cyan-400" /> 거래소 수급 및 고래 자본 대이동
+                  <Zap className="w-5 h-5 text-yellow-400" /> 주요 가상자산 실시간 선물 펀딩비 (Funding Rate)
                 </h2>
-                <div className={`grid gap-4 ${viewMode === "mobile" ? "grid-cols-1" : "grid-cols-3"}`}>
-                  <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-lg">
-                    <span className="text-[11px] text-slate-400 font-medium block">거래소 전체 BTC 순입출금 (24h)</span>
-                    <span className="text-lg md:text-xl font-mono font-bold text-rose-500 block mt-1.5">-14,250 BTC</span>
-                    <span className="text-[9px] text-slate-500 block mt-0.5">지갑으로 보관 이동 (강한 매수 홀딩 신호)</span>
+                <p className="text-xs text-slate-400 -mt-2">8시간 주기로 롱/숏 세력간 지불하는 비용 지표 (지나친 고펀딩비는 단기 스퀴즈 및 급락 주의)</p>
+                
+                <div className={`grid gap-3 ${viewMode === "mobile" ? "grid-cols-2" : "grid-cols-2 lg:grid-cols-4"}`}>
+                  <div className="bg-slate-900 border border-slate-800 p-3.5 rounded-xl flex flex-col justify-between h-24">
+                    <span className="text-[11px] text-orange-400 font-mono font-bold uppercase">Bitcoin (BTC)</span>
+                    <span className="text-base sm:text-lg font-mono font-bold text-slate-100">+0.0100 %</span>
+                    <span className="text-[9px] text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded w-max">정상 (균형 상태)</span>
                   </div>
-                  <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-lg">
-                    <span className="text-[11px] text-slate-400 font-medium block">고래 지갑(1,000+ BTC) 누적 매집량</span>
-                    <span className="text-lg md:text-xl font-mono font-bold text-emerald-400 block mt-1.5">+8,420 BTC</span>
-                    <span className="text-[9px] text-slate-500 block mt-0.5">최근 48시간 기준 스마트머니 매집 우세</span>
+                  <div className="bg-slate-900 border border-slate-800 p-3.5 rounded-xl flex flex-col justify-between h-24">
+                    <span className="text-[11px] text-blue-400 font-mono font-bold uppercase">Ethereum (ETH)</span>
+                    <span className="text-base sm:text-lg font-mono font-bold text-slate-100">+0.0350 %</span>
+                    <span className="text-[9px] text-yellow-500 bg-yellow-500/10 px-1.5 py-0.5 rounded w-max">주의 (롱 과열 조짐)</span>
                   </div>
-                  <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-lg">
-                    <span className="text-[11px] text-slate-400 font-medium block">스테이블코인 거래소 유입액</span>
-                    <span className="text-lg md:text-xl font-mono font-bold text-slate-200 block mt-1.5">+$1.24B</span>
-                    <span className="text-[9px] text-emerald-500 block mt-0.5">신규 가용 대기 자금 급증 (상승 동력)</span>
+                  <div className="bg-slate-900 border border-slate-800 p-3.5 rounded-xl flex flex-col justify-between h-24">
+                    <span className="text-[11px] text-slate-300 font-mono font-bold uppercase">Ripple (XRP)</span>
+                    <span className="text-base sm:text-lg font-mono font-bold text-rose-500">-0.0210 %</span>
+                    <span className="text-[9px] text-rose-500 bg-rose-500/10 px-1.5 py-0.5 rounded w-max">역펀딩 (숏 세력 과열)</span>
+                  </div>
+                  <div className="bg-slate-900 border border-slate-800 p-3.5 rounded-xl flex flex-col justify-between h-24">
+                    <span className="text-[11px] text-purple-400 font-mono font-bold uppercase">Solana (SOL)</span>
+                    <span className="text-base sm:text-lg font-mono font-bold text-slate-100">+0.0125 %</span>
+                    <span className="text-[9px] text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded w-max">정상 (안정권)</span>
                   </div>
                 </div>
               </section>
 
-              {/* 섹션 2: 네트워크 가치 및 채굴자 비용 구조 */}
+              {/* 2. 청산 히트맵 통계 섹션 */}
               <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner space-y-4">
                 <h2 className="text-base md:text-lg font-bold text-slate-200 flex items-center gap-2">
-                  <Award className="w-5 h-5 text-amber-400" /> 네트워크 펀더멘탈 및 채굴자 지표
+                  <Layers className="w-5 h-5 text-cyan-400" /> 실시간 청산 히트맵 매물대 (Liquidation Heatmap)
                 </h2>
-                <div className={`grid gap-4 ${viewMode === "mobile" ? "grid-cols-1" : "grid-cols-3"}`}>
-                  <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-lg">
-                    <span className="text-[11px] text-slate-400 font-medium block">MVRV Z-Score (시장 고점/저점 판독)</span>
-                    <span className="text-lg md:text-xl font-mono font-bold text-yellow-400 block mt-1.5">1.82</span>
-                    <span className="text-[9px] text-slate-500 block mt-0.5">아직 과열권 진입 안 함 (추가 상승 여력 존재)</span>
-                  </div>
-                  <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-lg">
-                    <span className="text-[11px] text-slate-400 font-medium block">비트코인 네트워크 해시레이트</span>
-                    <span className="text-lg md:text-xl font-mono font-bold text-slate-100 block mt-1.5">645 EH/s</span>
-                    <span className="text-[9px] text-emerald-500 block mt-0.5">역대 최고치 갱신 중 (네트워크 보안성 극대화)</span>
-                  </div>
-                  <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-lg">
-                    <span className="text-[11px] text-slate-400 font-medium block">채굴자 포지션 인덱스 (MPI)</span>
-                    <span className="text-lg md:text-xl font-mono font-bold text-emerald-400 block mt-1.5">-0.45</span>
-                    <span className="text-[9px] text-slate-500 block mt-0.5">채굴 기업 매도 압력 매우 낮음 (강력 보유 중)</span>
-                  </div>
-                </div>
-              </section>
+                <p className="text-xs text-slate-400 -mt-2">고레버리지 물량이 대거 밀집하여 향후 연쇄 청산(Squeeze) 스파크가 일어날 자석 매물대 스팟</p>
 
-              {/* 섹션 3: 청산 및 단기 트레이더 심리 진단 */}
-              <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner space-y-4">
-                <h2 className="text-base md:text-lg font-bold text-slate-200 flex items-center gap-2">
-                  <Hammer className="w-5 h-5 text-rose-400" /> 레버리지 및 실시간 강제 청산 통계
-                </h2>
                 <div className={`grid gap-4 ${viewMode === "mobile" ? "grid-cols-1" : "grid-cols-2"}`}>
-                  <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-lg flex justify-between items-center">
-                    <div>
-                      <span className="text-[11px] text-slate-400 block">24시간 숏 포지션 청산 규모 (Short Squeeze)</span>
-                      <span className="text-xl font-mono font-bold text-emerald-400 block mt-1">$42.10M</span>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-[10px] text-slate-500 block">비중</span>
-                      <span className="text-xs font-mono text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded font-bold">72% 폭발</span>
+                  {/* BTC 청산 매물대 박스 */}
+                  <div className="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 space-y-3">
+                    <p className="text-xs font-bold text-orange-400 pb-1.5 border-b border-slate-800/60">
+                      🍊 Bitcoin 청산 밀집 구간
+                    </p>
+                    <div className="space-y-2">
+                      <div className="bg-slate-950/50 p-2.5 rounded-lg border border-slate-800/40 flex justify-between items-center">
+                        <span className="text-xs font-mono text-slate-200 font-bold">$74,500</span>
+                        <div className="text-right">
+                          <span className="text-[10px] block text-slate-500">대규모 숏(Short) 청산벽</span>
+                          <span className="text-xs font-mono text-emerald-400 font-bold">$120M 밀집</span>
+                        </div>
+                      </div>
+                      <div className="bg-slate-950/50 p-2.5 rounded-lg border border-slate-800/40 flex justify-between items-center">
+                        <span className="text-xs font-mono text-slate-200 font-bold">$71,200</span>
+                        <div className="text-right">
+                          <span className="text-[10px] block text-slate-500">대규모 롱(Long) 청산벽</span>
+                          <span className="text-xs font-mono text-rose-400 font-bold">$185M 밀집</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-lg flex justify-between items-center">
-                    <div>
-                      <span className="text-[11px] text-slate-400 block">24시간 롱 포지션 청산 규모 (Long Liquidation)</span>
-                      <span className="text-xl font-mono font-bold text-rose-500 block mt-1">$16.45M</span>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-[10px] text-slate-500 block">비중</span>
-                      <span className="text-xs font-mono text-rose-500 bg-rose-500/10 px-2 py-0.5 rounded font-bold">28% 진정</span>
+
+                  {/* ETH 청산 매물대 박스 */}
+                  <div className="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 space-y-3">
+                    <p className="text-xs font-bold text-blue-400 pb-1.5 border-b border-slate-800/60">
+                      🔷 Ethereum 청산 밀집 구간
+                    </p>
+                    <div className="space-y-2">
+                      <div className="bg-slate-950/50 p-2.5 rounded-lg border border-slate-800/40 flex justify-between items-center">
+                        <span className="text-xs font-mono text-slate-200 font-bold">$2,050</span>
+                        <div className="text-right">
+                          <span className="text-[10px] block text-slate-500">대규모 숏(Short) 청산벽</span>
+                          <span className="text-xs font-mono text-emerald-400 font-bold">$45M 밀집</span>
+                        </div>
+                      </div>
+                      <div className="bg-slate-950/50 p-2.5 rounded-lg border border-slate-800/40 flex justify-between items-center">
+                        <span className="text-xs font-mono text-slate-200 font-bold">$1,910</span>
+                        <div className="text-right">
+                          <span className="text-[10px] block text-slate-500">대규모 롱(Long) 청산벽</span>
+                          <span className="text-xs font-mono text-rose-400 font-bold">$62M 밀집</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
