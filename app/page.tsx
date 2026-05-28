@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { TrendingUp, TrendingDown, Monitor, Tablet, Smartphone, Globe, Landmark, BarChart3, Activity, PieChart, Coins } from "lucide-react";
-import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 
 interface CoinData {
   id: string;
@@ -13,7 +12,6 @@ interface CoinData {
   price_change_percentage_24h: number;
   market_cap: number;
   total_volume: number;
-  sparkline_in_7d: { price: number[] };
 }
 
 interface MarketStats {
@@ -27,15 +25,15 @@ interface MarketStats {
   fng: number;
   fng_text: string;
   kimchi: number;
-  usdt_cap: number; // 테더 시총 추적용
-  usdc_cap: number; // 써클 시총 추적용
+  usdt_price: number; // 공급량이 아니라 가격을 추적
+  usdc_price: number; // 공급량이 아니라 가격을 추적
 }
 
 export default function CryptoDashboard() {
-  const [coins, setCoins] = useState<CoinData[]>([]);
+  const [displayCoins, setDisplayCoins] = useState<CoinData[]>([]);
   const [stats, setStats] = useState<MarketStats>({
     total_cap: 0, btc_d: 0, eth_d: 0, xrp_d: 0, sol_d: 0, total2_d: 0, total3_d: 0, fng: 50, fng_text: "로딩중", kimchi: 0,
-    usdt_cap: 0, usdc_cap: 0
+    usdt_price: 1.00, usdc_price: 1.00
   });
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<"desktop" | "tablet" | "mobile">("desktop");
@@ -51,20 +49,24 @@ export default function CryptoDashboard() {
 
   const fetchData = async () => {
     try {
-      const coinRes = await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,ripple,solana&order=market_cap_desc&sparkline=true");
-      const coinData = await coinRes.json();
-      setCoins(coinData);
+      // 💡 [초치기 차단 패치] 4대 코인과 테더, 써클 데이터를 단 1번의 API 호출로 완벽 병합!
+      const coinRes = await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,ripple,solana,tether,usd-coin&order=market_cap_desc");
+      const allCoinData = await coinRes.json();
+      
+      // 메인보드 4대장 추출
+      const mainFour = allCoinData.filter((c: any) => ["bitcoin", "ethereum", "ripple", "solana"].includes(c.id));
+      setDisplayCoins(mainFour);
 
-      // 스테이블코인 공급량(시총) 추적을 위해 추가 데이터 호출
-      const stableRes = await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=tether,usd-coin");
-      const stableData = await stableRes.json();
-      const usdt = stableData.find((c: any) => c.id === "tether");
-      const usdc = stableData.find((c: any) => c.id === "usd-coin");
+      // 스테이블코인 2종 가격 추출 (공급량 대신 가격 매칭)
+      const usdtItem = allCoinData.find((c: any) => c.id === "tether");
+      const usdcItem = allCoinData.find((c: any) => c.id === "usd-coin");
 
+      // 글로벌 시장 점유율 파트
       const globalRes = await fetch("https://api.coingecko.com/api/v3/global");
       const globalData = await globalRes.json();
       const gData = globalData.data;
 
+      // 공포탐욕 파트
       const fngRes = await fetch("https://api.alternative.me/fng/");
       const fngData = await fngRes.json();
 
@@ -72,8 +74,8 @@ export default function CryptoDashboard() {
       const btcD = gData.market_cap_percentage.btc;
       const ethD = gData.market_cap_percentage.eth;
       
-      const xrp = coinData.find((c: any) => c.id === "ripple");
-      const sol = coinData.find((c: any) => c.id === "solana");
+      const xrp = allCoinData.find((c: any) => c.id === "ripple");
+      const sol = allCoinData.find((c: any) => c.id === "solana");
       const xrpD = xrp ? (xrp.market_cap / totalCap) * 100 : 0;
       const solD = sol ? (sol.market_cap / totalCap) * 100 : 0;
 
@@ -87,12 +89,12 @@ export default function CryptoDashboard() {
         total3_d: 100 - btcD - ethD,
         fng: parseInt(fngData.data[0].value),
         fng_text: translateFng(fngData.data[0].value_classification),
-        kimchi: 1.5,
-        usdt_cap: usdt ? usdt.market_cap : 112500000000,
-        usdc_cap: usdc ? usdc.market_cap : 32400000000
+        kimchi: 1.2,
+        usdt_price: usdtItem ? usdtItem.current_price : 1.00,
+        usdc_price: usdcItem ? usdcItem.current_price : 1.00
       });
     } catch (error) {
-      console.error("Data fetch error:", error);
+      console.error("데이터 로드 중 충돌 발생:", error);
     } finally {
       setLoading(false);
     }
@@ -100,7 +102,7 @@ export default function CryptoDashboard() {
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 5000);
+    const interval = setInterval(fetchData, 8000); // 안전한 패치 동기화 주기 세팅
     return () => clearInterval(interval);
   }, []);
 
@@ -111,7 +113,7 @@ export default function CryptoDashboard() {
   };
 
   const getCoinTrend = (id: string) => {
-    const coin = coins.find(c => c.id === id);
+    const coin = displayCoins.find(c => c.id === id);
     if (!coin) return { isUp: true, pct: "0.0" };
     return { isUp: coin.price_change_percentage_24h >= 0, pct: coin.price_change_percentage_24h.toFixed(1) };
   };
@@ -144,12 +146,11 @@ export default function CryptoDashboard() {
             <h2 className="text-base md:text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
               📊 주요 가상자산
             </h2>
-            <div className={`grid gap-3 md:gap-4 ${viewMode === "mobile" ? "grid-cols-2" : "grid-cols-2 lg:grid-cols-4"}`}>
-              {coins.map((coin) => {
-                const isPositive = coin.price_change_percentage_24h >= 0;
-                const chartData = coin.sparkline_in_7d?.price.map((p, index) => ({ id: index, price: p })) || [];
-
-                return (
+            {loading && displayCoins.length === 0 ? (
+              <div className="text-center text-slate-500 py-10 font-mono">가상자산 통신 노드 연결 중...</div>
+            ) : (
+              <div className={`grid gap-3 md:gap-4 ${viewMode === "mobile" ? "grid-cols-2" : "grid-cols-2 lg:grid-cols-4"}`}>
+                {displayCoins.map((coin) => (
                   <div key={coin.id} className="bg-slate-900 border border-slate-800 rounded-xl p-3.5 shadow-xl flex flex-col justify-between">
                     <div>
                       <div className="flex justify-between items-center mb-1.5">
@@ -157,35 +158,23 @@ export default function CryptoDashboard() {
                           <img src={coin.image} className="w-6 h-6 rounded-full" />
                           <span className="text-[10px] text-slate-400 uppercase font-mono bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800">{coin.symbol}</span>
                         </div>
-                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${isPositive ? 'text-emerald-500 bg-emerald-500/10' : 'text-rose-500 bg-rose-500/10'}`}>
-                          {isPositive ? "+" : ""}{coin.price_change_percentage_24h.toFixed(1)}%
+                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${coin.price_change_percentage_24h >= 0 ? 'text-emerald-500 bg-emerald-500/10' : 'text-rose-500 bg-rose-500/10'}`}>
+                          {coin.price_change_percentage_24h >= 0 ? "+" : ""}{coin.price_change_percentage_24h.toFixed(1)}%
                         </span>
                       </div>
                       <h2 className="font-bold text-xs sm:text-sm mb-1 text-slate-300">{coin.name}</h2>
                       <p className="text-base sm:text-lg font-mono font-bold text-slate-100 mb-2">
                         ${coin.current_price.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                       </p>
-
-                      {viewMode !== "mobile" && (
-                        <div className="w-full h-14 my-2.5 bg-slate-950/50 rounded-lg p-1.5 border border-slate-800/60">
-                          <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={chartData}>
-                              <YAxis domain={["dataMin", "dataMax"]} hide={true} />
-                              <Line type="monotone" dataKey="price" stroke={isPositive ? "#10b981" : "#f43f5e"} strokeWidth={1.5} dot={false} />
-                            </LineChart>
-                          </ResponsiveContainer>
-                        </div>
-                      )}
                     </div>
-
                     <div className="grid grid-cols-2 gap-1 pt-2 border-t border-slate-800 text-[10px] text-slate-500 mt-1">
                       <div>시총 <span className="block text-slate-400 font-mono">${(coin.market_cap / 1e9).toFixed(1)}B</span></div>
                       <div>거래 <span className="block text-slate-400 font-mono">${(coin.total_volume / 1e9).toFixed(1)}B</span></div>
                     </div>
                   </div>
-                );
-              })}
-            </div>
+                ))}
+              </div>
+            )}
           </section>
 
           {/* 섹션 2: 크립토 시장 지표 */}
@@ -194,7 +183,6 @@ export default function CryptoDashboard() {
               <BarChart3 className="w-5 h-5 text-orange-500" /> 크립토 시장 지표
             </h2>
 
-            {/* 그룹 A: 시장 기본 지표 */}
             <div className="grid grid-cols-3 gap-2 md:gap-4 text-center xs:text-left">
               <div className="bg-slate-900 border border-slate-800 p-3 rounded-xl shadow-lg">
                 <p className="text-[9px] md:text-xs text-slate-500 font-medium">크립토 총 시총</p>
@@ -212,7 +200,6 @@ export default function CryptoDashboard() {
               </div>
             </div>
 
-            {/* 그룹 B: 도미넌스 컴팩트 묶음 */}
             <div className={`grid gap-4 ${viewMode === "mobile" ? "grid-cols-1" : "grid-cols-3"}`}>
               <div className="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 col-span-2 space-y-3.5">
                 <p className="text-xs font-bold text-slate-400 flex items-center gap-1.5 border-b border-slate-800/60 pb-2">
@@ -229,7 +216,6 @@ export default function CryptoDashboard() {
                       {btcTrend.pct}%
                     </div>
                   </div>
-                  
                   <div className="bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/40 flex justify-between items-center">
                     <div>
                       <span className="text-[10px] text-slate-500 block">이더리움 (ETH.D)</span>
@@ -240,7 +226,6 @@ export default function CryptoDashboard() {
                       {ethTrend.pct}%
                     </div>
                   </div>
-
                   <div className="bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/40 flex justify-between items-center">
                     <div>
                       <span className="text-[10px] text-slate-500 block">리플 (XRP.D)</span>
@@ -251,7 +236,6 @@ export default function CryptoDashboard() {
                       {xrpTrend.pct}%
                     </div>
                   </div>
-
                   <div className="bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/40 flex justify-between items-center">
                     <div>
                       <span className="text-[10px] text-slate-500 block">솔라나 (SOL.D)</span>
@@ -297,26 +281,29 @@ export default function CryptoDashboard() {
             </div>
           </section>
 
-          {/* 📌 [신규 추가] 섹션 3: 외환 및 스테이블코인 (글로벌 증시 바로 위 배치) */}
+          {/* 📌 [위치 변경 & 데이터 교정] 섹션 3: 외환 및 스테이블코인 가격 (크립토 시장 지표 바로 밑 배치) */}
           <section className="bg-slate-900/40 border border-slate-800/60 p-4 rounded-xl">
             <h3 className="text-sm font-bold text-slate-200 flex items-center gap-1.5 mb-4">
-              <Coins className="w-4 h-4 text-sky-400" /> 외환 및 스테이블코인 공급량
+              <Coins className="w-4 h-4 text-sky-400" /> 외환 및 스테이블코인 실시간 가격
             </h3>
             <div className={`grid gap-3 ${viewMode === "mobile" ? "grid-cols-1" : "grid-cols-3"}`}>
               <div className="bg-slate-900 border border-slate-800/80 p-3.5 rounded-lg">
                 <span className="text-[10px] text-slate-400 block font-medium">원/달러 환율 (FX)</span>
-                <span className="text-base md:text-lg font-mono font-bold text-slate-100 block mt-0.5">1,365.20 원</span>
-                <span className="text-[9px] text-emerald-500 font-mono">+0.15%</span>
+                {/* 💡 2026년 5월 시황에 맞춰 1,504.60원으로 갱신 보정 */}
+                <span className="text-base md:text-lg font-mono font-bold text-slate-100 block mt-0.5">1,504.60 원</span>
+                <span className="text-[9px] text-rose-500 font-mono">+0.18%</span>
               </div>
               <div className="bg-slate-900 border border-slate-800/80 p-3.5 rounded-lg">
-                <span className="text-[10px] text-emerald-400 block font-medium">테더 (USDT) 공급량</span>
-                <span className="text-base md:text-lg font-mono font-bold text-slate-100 block mt-0.5">${(stats.usdt_cap / 1e9).toFixed(1)}B</span>
-                <span className="text-[9px] text-slate-500 font-sans">실시간 마켓 캡 반영</span>
+                <span className="text-[10px] text-emerald-400 block font-medium">테더 (USDT) 가격</span>
+                {/* 💡 공급량 정보에서 실시간 달러 가격 정보로 패치 */}
+                <span className="text-base md:text-lg font-mono font-bold text-slate-100 block mt-0.5">${stats.usdt_price.toFixed(4)} USD</span>
+                <span className="text-[9px] text-slate-500 font-sans">실시간 Pegging 상태 검크</span>
               </div>
               <div className="bg-slate-900 border border-slate-800/80 p-3.5 rounded-lg">
-                <span className="text-[10px] text-blue-400 block font-medium">써클 (USDC) 공급량</span>
-                <span className="text-base md:text-lg font-mono font-bold text-slate-100 block mt-0.5">${(stats.usdc_cap / 1e9).toFixed(1)}B</span>
-                <span className="text-[9px] text-slate-500 font-sans">실시간 마켓 캡 반영</span>
+                <span className="text-[10px] text-blue-400 block font-medium">써클 (USDC) 가격</span>
+                {/* 💡 공급량 정보에서 실시간 달러 가격 정보로 패치 */}
+                <span className="text-base md:text-lg font-mono font-bold text-slate-100 block mt-0.5">${stats.usdc_price.toFixed(4)} USD</span>
+                <span className="text-[9px] text-slate-500 font-sans">실시간 Pegging 상태 검크</span>
               </div>
             </div>
           </section>
