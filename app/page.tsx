@@ -169,7 +169,7 @@ export default function CryptoDashboard() {
               </nav>
             </div>
             <div className="text-[11px] text-slate-600 font-mono text-center border-t border-slate-800/60 pt-4">
-              Professional Trading Hub v3.1
+              Professional Trading Hub v3.2
             </div>
           </div>
           <div className="flex-1" onClick={() => setIsMenuOpen(false)}></div>
@@ -194,7 +194,7 @@ export default function CryptoDashboard() {
           </div>
           <div className="flex items-center gap-2 text-xs text-emerald-500 font-mono bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
             <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-            {activePage === "dashboard" ? "MACRO" : "COINGLASS"}
+            {activePage === "dashboard" ? "MACRO" : "DERIVATIVES"}
           </div>
         </header>
 
@@ -374,17 +374,17 @@ export default function CryptoDashboard() {
                       <span className="text-[10px] text-slate-500 font-normal">블랙록(IBIT) 등 주요 기관</span>
                     </p>
                     <div className="grid grid-cols-3 gap-2">
-                      <div className="bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/40">
+                      <div className="bg-slate-950/40 p-2 rounded-lg border border-slate-800/40">
                         <span className="text-[10px] text-slate-400 block font-medium">비트코인 ETF</span>
                         <span className="text-sm md:text-base font-mono font-bold text-emerald-400 mt-1 block">+$142.5M</span>
                         <span className="text-[9px] text-slate-500 block mt-0.5">3일 연속 순유입</span>
                       </div>
-                      <div className="bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/40">
+                      <div className="bg-slate-950/40 p-2 rounded-lg border border-slate-800/40">
                         <span className="text-[10px] text-slate-400 block font-medium">이더리움 ETF</span>
                         <span className="text-sm md:text-base font-mono font-bold text-rose-500 mt-1 block">-$18.2M</span>
                         <span className="text-[9px] text-slate-500 block mt-0.5">그레이스케일 유출</span>
                       </div>
-                      <div className="bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/40">
+                      <div className="bg-slate-950/40 p-2 rounded-lg border border-slate-800/40">
                         <span className="text-[10px] text-slate-400 block font-medium">리플(XRP) ETF</span>
                         <span className="text-sm md:text-base font-mono font-bold text-slate-300 mt-1 block">+$2.1M</span>
                         <span className="text-[9px] text-slate-500 block mt-0.5">기관 자금 대기중</span>
@@ -524,7 +524,7 @@ export default function CryptoDashboard() {
           )}
 
           {/* ====================================================
-              ⚙️ PAGE LAYOUT B: 파생상품 및 고해상도 오더 제어 레이어
+              ⚙️ PAGE LAYOUT B: 파생상품 지표 및 듀얼 히트맵 스위처
              ==================================================== */}
           {activePage === "onchain" && (
             <>
@@ -557,37 +557,41 @@ export default function CryptoDashboard() {
                 </div>
               </section>
 
-              {/* 💡 [에러 교정 복구] 연결 거부 아이프레임을 차단하고 '원클릭 원본 다이렉트 브로커 패널'로 개편 완료 */}
+              {/* 🎯 듀얼 고해상도 청산 관측 허브 */}
               <section className="bg-slate-900/40 border border-slate-800/60 p-5 md:p-8 rounded-2xl shadow-inner text-center space-y-6">
                 <div className="max-w-md mx-auto space-y-3">
-                  <div className="w-12 h-12 bg-cyan-500/10 border border-cyan-500/30 rounded-2xl flex items-center justify-center mx-auto text-cyan-400">
+                  <div className="w-12 h-12 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl flex items-center justify-center mx-auto text-emerald-400">
                     <Layers className="w-6 h-6" />
                   </div>
-                  <h2 className="text-lg md:text-xl font-bold text-slate-200">Coinglass 실시간 청산 히트맵 관측소</h2>
+                  <h2 className="text-lg md:text-xl font-bold text-slate-200">글로벌 실시간 청산 히트맵 관측소</h2>
                   <p className="text-xs text-slate-400 leading-relaxed">
-                    코인글라스 보안 방화벽 프로토콜 보호로 인해 대시보드 내부 임베딩이 일시 차단되었습니다. 
-                    아래 실시간 허브 이동 버튼을 누르시면 롱/숏 연쇄 고레버리지 청산 매물대를 고해상도로 원형 그대로 즉시 리딩하실 수 있습니다.
+                    크립토 파생상품 거래소들의 보안 프레임 통제로 임베딩이 제한됩니다. 
+                    아래 검증된 대표 2대 플랫폼 링크를 사용하여 원클릭으로 청산 벽과 고래 매물대를 고해상도 원형 그대로 즉시 확인하세요.
                   </p>
                 </div>
 
-                {/* 🚀 트레이더 전용 원클릭 다이렉트 링크 점프 컴포넌트 */}
-                <div className="flex flex-col sm:flex-row gap-3 justify-center items-center max-w-xl mx-auto pt-2">
+                {/* 트레이더 전용 원클릭 스위칭 패널 */}
+                <div className="flex flex-col sm:flex-row gap-3 justify-center items-center max-w-2xl mx-auto pt-2">
+                  <a 
+                    href="https://coinank.com/ko/chart/derivatives/liq-heat-map" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-1/2 flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-black rounded-xl shadow-lg shadow-cyan-500/10 hover:opacity-90 active:scale-95 transition-all text-sm"
+                  >
+                    🔥 CoinAnk 실시간 히트맵 열기 <ExternalLink className="w-4 h-4" />
+                  </a>
                   <a 
                     href="https://www.coinglass.com/ko/pro/futures/LiquidationHeatMap" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-slate-950 font-bold rounded-xl shadow-lg shadow-emerald-500/20 hover:opacity-90 active:scale-95 transition-all text-sm"
+                    className="w-full sm:w-1/2 flex items-center justify-center gap-2 px-6 py-4 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-100 font-bold rounded-xl active:scale-95 transition-all text-sm"
                   >
-                    🔥 Coinglass 실시간 히트맵 허브 가기 <ExternalLink className="w-4 h-4" />
+                    📊 Coinglass 실시간 히트맵 이동 <ExternalLink className="w-4 h-4" />
                   </a>
-                  <a 
-                    href="https://open-profit.com/widget/liquidation-heatmap?theme=dark" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold rounded-xl active:scale-95 transition-all text-sm"
-                  >
-                    📊 보조 청산 오더북 단독창 열기
-                  </a>
+                </div>
+                
+                <div className="text-[11px] text-slate-500 font-sans max-w-sm mx-auto">
+                  💡 Tip: 방송이나 매매 화면에 듀얼 모니터 브라우저 창으로 따로 띄워두시면 렉 없이 가장 정확한 오더북 매물 수급을 매칭하실 수 있습니다.
                 </div>
               </section>
             </>
