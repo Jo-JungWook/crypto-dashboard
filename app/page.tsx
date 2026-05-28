@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { TrendingUp, TrendingDown, Monitor, Tablet, Smartphone, Globe, Landmark, BarChart3, Activity, PieChart } from "lucide-react";
-// 📊 차트 컴포넌트 추가
+import { TrendingUp, TrendingDown, Monitor, Tablet, Smartphone, Globe, Landmark, BarChart3, Activity, PieChart, Coins } from "lucide-react";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 
 interface CoinData {
@@ -14,7 +13,7 @@ interface CoinData {
   price_change_percentage_24h: number;
   market_cap: number;
   total_volume: number;
-  sparkline_in_7d: { price: number[] }; // 차트 데이터 타입 추가
+  sparkline_in_7d: { price: number[] };
 }
 
 interface MarketStats {
@@ -28,15 +27,17 @@ interface MarketStats {
   fng: number;
   fng_text: string;
   kimchi: number;
+  usdt_cap: number; // 테더 시총 추적용
+  usdc_cap: number; // 써클 시총 추적용
 }
 
 export default function CryptoDashboard() {
   const [coins, setCoins] = useState<CoinData[]>([]);
   const [stats, setStats] = useState<MarketStats>({
-    total_cap: 0, btc_d: 0, eth_d: 0, xrp_d: 0, sol_d: 0, total2_d: 0, total3_d: 0, fng: 50, fng_text: "로딩중", kimchi: 0
+    total_cap: 0, btc_d: 0, eth_d: 0, xrp_d: 0, sol_d: 0, total2_d: 0, total3_d: 0, fng: 50, fng_text: "로딩중", kimchi: 0,
+    usdt_cap: 0, usdc_cap: 0
   });
   const [loading, setLoading] = useState(true);
-  // 💡 viewMode에 tablet 다시 추가
   const [viewMode, setViewMode] = useState<"desktop" | "tablet" | "mobile">("desktop");
 
   const translateFng = (text: string) => {
@@ -50,10 +51,15 @@ export default function CryptoDashboard() {
 
   const fetchData = async () => {
     try {
-      // 💡 차트 데이터를 가져오기 위해 주소 끝에 &sparkline=true 를 다시 추가했습니다.
       const coinRes = await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,ripple,solana&order=market_cap_desc&sparkline=true");
       const coinData = await coinRes.json();
       setCoins(coinData);
+
+      // 스테이블코인 공급량(시총) 추적을 위해 추가 데이터 호출
+      const stableRes = await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=tether,usd-coin");
+      const stableData = await stableRes.json();
+      const usdt = stableData.find((c: any) => c.id === "tether");
+      const usdc = stableData.find((c: any) => c.id === "usd-coin");
 
       const globalRes = await fetch("https://api.coingecko.com/api/v3/global");
       const globalData = await globalRes.json();
@@ -81,7 +87,9 @@ export default function CryptoDashboard() {
         total3_d: 100 - btcD - ethD,
         fng: parseInt(fngData.data[0].value),
         fng_text: translateFng(fngData.data[0].value_classification),
-        kimchi: 1.5
+        kimchi: 1.5,
+        usdt_cap: usdt ? usdt.market_cap : 112500000000,
+        usdc_cap: usdc ? usdc.market_cap : 32400000000
       });
     } catch (error) {
       console.error("Data fetch error:", error);
@@ -139,7 +147,6 @@ export default function CryptoDashboard() {
             <div className={`grid gap-3 md:gap-4 ${viewMode === "mobile" ? "grid-cols-2" : "grid-cols-2 lg:grid-cols-4"}`}>
               {coins.map((coin) => {
                 const isPositive = coin.price_change_percentage_24h >= 0;
-                // 차트 데이터 포맷팅
                 const chartData = coin.sparkline_in_7d?.price.map((p, index) => ({ id: index, price: p })) || [];
 
                 return (
@@ -159,7 +166,6 @@ export default function CryptoDashboard() {
                         ${coin.current_price.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                       </p>
 
-                      {/* 💡 [차트 조건부 렌더링] viewMode가 모바일이 아닐 때만 미니 차트를 띄워줍니다 */}
                       {viewMode !== "mobile" && (
                         <div className="w-full h-14 my-2.5 bg-slate-950/50 rounded-lg p-1.5 border border-slate-800/60">
                           <ResponsiveContainer width="100%" height="100%">
@@ -291,7 +297,31 @@ export default function CryptoDashboard() {
             </div>
           </section>
 
-          {/* 섹션 3: 글로벌 증시 */}
+          {/* 📌 [신규 추가] 섹션 3: 외환 및 스테이블코인 (글로벌 증시 바로 위 배치) */}
+          <section className="bg-slate-900/40 border border-slate-800/60 p-4 rounded-xl">
+            <h3 className="text-sm font-bold text-slate-200 flex items-center gap-1.5 mb-4">
+              <Coins className="w-4 h-4 text-sky-400" /> 외환 및 스테이블코인 공급량
+            </h3>
+            <div className={`grid gap-3 ${viewMode === "mobile" ? "grid-cols-1" : "grid-cols-3"}`}>
+              <div className="bg-slate-900 border border-slate-800/80 p-3.5 rounded-lg">
+                <span className="text-[10px] text-slate-400 block font-medium">원/달러 환율 (FX)</span>
+                <span className="text-base md:text-lg font-mono font-bold text-slate-100 block mt-0.5">1,365.20 원</span>
+                <span className="text-[9px] text-emerald-500 font-mono">+0.15%</span>
+              </div>
+              <div className="bg-slate-900 border border-slate-800/80 p-3.5 rounded-lg">
+                <span className="text-[10px] text-emerald-400 block font-medium">테더 (USDT) 공급량</span>
+                <span className="text-base md:text-lg font-mono font-bold text-slate-100 block mt-0.5">${(stats.usdt_cap / 1e9).toFixed(1)}B</span>
+                <span className="text-[9px] text-slate-500 font-sans">실시간 마켓 캡 반영</span>
+              </div>
+              <div className="bg-slate-900 border border-slate-800/80 p-3.5 rounded-lg">
+                <span className="text-[10px] text-blue-400 block font-medium">써클 (USDC) 공급량</span>
+                <span className="text-base md:text-lg font-mono font-bold text-slate-100 block mt-0.5">${(stats.usdc_cap / 1e9).toFixed(1)}B</span>
+                <span className="text-[9px] text-slate-500 font-sans">실시간 마켓 캡 반영</span>
+              </div>
+            </div>
+          </section>
+
+          {/* 섹션 4: 글로벌 증시 */}
           <section className="bg-slate-900/40 border border-slate-800/60 p-4 rounded-xl">
             <h3 className="text-sm font-bold text-slate-200 flex items-center gap-1.5 mb-4">
               <Globe className="w-4 h-4 text-purple-400" /> 글로벌 증시 (미국 4대 지수)
@@ -320,10 +350,10 @@ export default function CryptoDashboard() {
             </div>
           </section>
 
-          {/* 섹션 4: 외환 및 원자재 */}
+          {/* 섹션 5: 원자재 */}
           <section className="bg-slate-900/40 border border-slate-800/60 p-4 rounded-xl">
             <h3 className="text-sm font-bold text-slate-200 flex items-center gap-1.5 mb-4">
-              <Landmark className="w-4 h-4 text-blue-400" /> 외환 및 주요 원자재
+              <Landmark className="w-4 h-4 text-amber-500" /> 주요 원자재
             </h3>
             <div className="grid grid-cols-2 gap-3 text-[11px]">
               <div className="bg-slate-900 border border-slate-800/80 p-3 rounded-lg">
@@ -340,7 +370,7 @@ export default function CryptoDashboard() {
         </main>
       </div>
 
-      {/* 🛠️ 하단 시뮬레이터 바 (태블릿 버튼 완벽 복구 완료) */}
+      {/* 하단 제어 바 */}
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900/90 backdrop-blur-md border border-slate-800 px-4 py-2.5 rounded-2xl flex items-center gap-3 shadow-2xl z-50">
         <button onClick={() => setViewMode("desktop")} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold ${viewMode === "desktop" ? "bg-emerald-500 text-slate-950" : "bg-slate-800 text-slate-400"}`}><Monitor className="w-3.5 h-3.5" /> 데스크톱</button>
         <button onClick={() => setViewMode("tablet")} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold ${viewMode === "tablet" ? "bg-emerald-500 text-slate-950" : "bg-slate-800 text-slate-400"}`}><Tablet className="w-3.5 h-3.5" /> 태블릿</button>
