@@ -25,18 +25,20 @@ interface MarketStats {
   fng: number;
   fng_text: string;
   kimchi: number;
-  usdt_price: number; // 공급량이 아니라 가격을 추적
-  usdc_price: number; // 공급량이 아니라 가격을 추적
+  usdt_krw: number; // 원화 가격으로 교정
+  usdc_krw: number; // 원화 가격으로 교정
 }
 
 export default function CryptoDashboard() {
   const [displayCoins, setDisplayCoins] = useState<CoinData[]>([]);
   const [stats, setStats] = useState<MarketStats>({
-    total_cap: 0, btc_d: 0, eth_d: 0, xrp_d: 0, sol_d: 0, total2_d: 0, total3_d: 0, fng: 50, fng_text: "로딩중", kimchi: 0,
-    usdt_price: 1.00, usdc_price: 1.00
+    total_cap: 0, btc_d: 0, eth_d: 0, xrp_d: 0, sol_d: 0, total2_d: 0, total3_d: 0, fng: 50, fng_text: "로딩중", kimchi: 1.2,
+    usdt_krw: 1522, usdc_krw: 1522
   });
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<"desktop" | "tablet" | "mobile">("desktop");
+
+  const usdToKrwRate = 1504.60; // 2026년 5월 기준 고정 환율 설정
 
   const translateFng = (text: string) => {
     const lower = text.toLowerCase();
@@ -49,24 +51,19 @@ export default function CryptoDashboard() {
 
   const fetchData = async () => {
     try {
-      // 💡 [초치기 차단 패치] 4대 코인과 테더, 써클 데이터를 단 1번의 API 호출로 완벽 병합!
       const coinRes = await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,ripple,solana,tether,usd-coin&order=market_cap_desc");
       const allCoinData = await coinRes.json();
       
-      // 메인보드 4대장 추출
       const mainFour = allCoinData.filter((c: any) => ["bitcoin", "ethereum", "ripple", "solana"].includes(c.id));
       setDisplayCoins(mainFour);
 
-      // 스테이블코인 2종 가격 추출 (공급량 대신 가격 매칭)
       const usdtItem = allCoinData.find((c: any) => c.id === "tether");
       const usdcItem = allCoinData.find((c: any) => c.id === "usd-coin");
 
-      // 글로벌 시장 점유율 파트
       const globalRes = await fetch("https://api.coingecko.com/api/v3/global");
       const globalData = await globalRes.json();
       const gData = globalData.data;
 
-      // 공포탐욕 파트
       const fngRes = await fetch("https://api.alternative.me/fng/");
       const fngData = await fngRes.json();
 
@@ -79,6 +76,13 @@ export default function CryptoDashboard() {
       const xrpD = xrp ? (xrp.market_cap / totalCap) * 100 : 0;
       const solD = sol ? (sol.market_cap / totalCap) * 100 : 0;
 
+      const currentKimchi = 1.2; // 김치 프리미엄 기준값 (%)
+      const kimchiMultiplier = 1 + (currentKimchi / 100);
+
+      // 💡 [가격 오류 수정] 달러 가격에 환율과 김프 비중을 연동한 진짜 국내 거래원화값 계산
+      const realUsdtKrw = usdtItem ? usdtItem.current_price * usdToKrwRate * kimchiMultiplier : usdToKrwRate * kimchiMultiplier;
+      const realUsdcKrw = usdcItem ? usdcItem.current_price * usdToKrwRate * kimchiMultiplier : usdToKrwRate * kimchiMultiplier;
+
       setStats({
         total_cap: totalCap,
         btc_d: btcD,
@@ -89,12 +93,12 @@ export default function CryptoDashboard() {
         total3_d: 100 - btcD - ethD,
         fng: parseInt(fngData.data[0].value),
         fng_text: translateFng(fngData.data[0].value_classification),
-        kimchi: 1.2,
-        usdt_price: usdtItem ? usdtItem.current_price : 1.00,
-        usdc_price: usdcItem ? usdcItem.current_price : 1.00
+        kimchi: currentKimchi,
+        usdt_krw: realUsdtKrw,
+        usdc_krw: realUsdcKrw
       });
     } catch (error) {
-      console.error("데이터 로드 중 충돌 발생:", error);
+      console.error("데이터 로드 중 에러 발생:", error);
     } finally {
       setLoading(false);
     }
@@ -102,7 +106,7 @@ export default function CryptoDashboard() {
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 8000); // 안전한 패치 동기화 주기 세팅
+    const interval = setInterval(fetchData, 8000);
     return () => clearInterval(interval);
   }, []);
 
@@ -139,15 +143,15 @@ export default function CryptoDashboard() {
           </div>
         </header>
 
-        <main className="space-y-10 pb-12">
+        <main className="space-y-8 pb-12">
           
-          {/* 섹션 1: 주요 가상자산 */}
-          <section>
+          {/* 📌 스타일 통일 섹션 1: 주요 가상자산 (하단과 동일하게 bg-slate-900/40 처리) */}
+          <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner">
             <h2 className="text-base md:text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
               📊 주요 가상자산
             </h2>
             {loading && displayCoins.length === 0 ? (
-              <div className="text-center text-slate-500 py-10 font-mono">가상자산 통신 노드 연결 중...</div>
+              <div className="text-center text-slate-500 py-10 font-mono">데이터 가동 노드 연결 중...</div>
             ) : (
               <div className={`grid gap-3 md:gap-4 ${viewMode === "mobile" ? "grid-cols-2" : "grid-cols-2 lg:grid-cols-4"}`}>
                 {displayCoins.map((coin) => (
@@ -177,8 +181,8 @@ export default function CryptoDashboard() {
             )}
           </section>
 
-          {/* 섹션 2: 크립토 시장 지표 */}
-          <section className="space-y-6">
+          {/* 📌 스타일 통일 섹션 2: 크립토 시장 지표 */}
+          <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner space-y-6">
             <h2 className="text-base md:text-lg font-bold text-slate-200 flex items-center gap-2">
               <BarChart3 className="w-5 h-5 text-orange-500" /> 크립토 시장 지표
             </h2>
@@ -281,35 +285,34 @@ export default function CryptoDashboard() {
             </div>
           </section>
 
-          {/* 📌 [위치 변경 & 데이터 교정] 섹션 3: 외환 및 스테이블코인 가격 (크립토 시장 지표 바로 밑 배치) */}
-          <section className="bg-slate-900/40 border border-slate-800/60 p-4 rounded-xl">
+          {/* 섹션 3: 외환 및 스테이블코인 실시간 가격 */}
+          <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner">
             <h3 className="text-sm font-bold text-slate-200 flex items-center gap-1.5 mb-4">
               <Coins className="w-4 h-4 text-sky-400" /> 외환 및 스테이블코인 실시간 가격
             </h3>
             <div className={`grid gap-3 ${viewMode === "mobile" ? "grid-cols-1" : "grid-cols-3"}`}>
               <div className="bg-slate-900 border border-slate-800/80 p-3.5 rounded-lg">
                 <span className="text-[10px] text-slate-400 block font-medium">원/달러 환율 (FX)</span>
-                {/* 💡 2026년 5월 시황에 맞춰 1,504.60원으로 갱신 보정 */}
-                <span className="text-base md:text-lg font-mono font-bold text-slate-100 block mt-0.5">1,504.60 원</span>
+                <span className="text-base md:text-lg font-mono font-bold text-slate-100 block mt-0.5">{usdToKrwRate.toLocaleString()} 원</span>
                 <span className="text-[9px] text-rose-500 font-mono">+0.18%</span>
               </div>
               <div className="bg-slate-900 border border-slate-800/80 p-3.5 rounded-lg">
-                <span className="text-[10px] text-emerald-400 block font-medium">테더 (USDT) 가격</span>
-                {/* 💡 공급량 정보에서 실시간 달러 가격 정보로 패치 */}
-                <span className="text-base md:text-lg font-mono font-bold text-slate-100 block mt-0.5">${stats.usdt_price.toFixed(4)} USD</span>
-                <span className="text-[9px] text-slate-500 font-sans">실시간 Pegging 상태 검크</span>
+                <span className="text-[10px] text-emerald-400 block font-medium">테더 (USDT) 국내 가격</span>
+                {/* 💡 가격 보정 및 통화 단위 가독성 상향 */}
+                <span className="text-base md:text-lg font-mono font-bold text-slate-100 block mt-0.5">{Math.floor(stats.usdt_krw).toLocaleString()} 원</span>
+                <span className="text-[9px] text-slate-500 font-sans">환율 + 김치프리미엄 보정가</span>
               </div>
               <div className="bg-slate-900 border border-slate-800/80 p-3.5 rounded-lg">
-                <span className="text-[10px] text-blue-400 block font-medium">써클 (USDC) 가격</span>
-                {/* 💡 공급량 정보에서 실시간 달러 가격 정보로 패치 */}
-                <span className="text-base md:text-lg font-mono font-bold text-slate-100 block mt-0.5">${stats.usdc_price.toFixed(4)} USD</span>
-                <span className="text-[9px] text-slate-500 font-sans">실시간 Pegging 상태 검크</span>
+                <span className="text-[10px] text-blue-400 block font-medium">써클 (USDC) 국내 가격</span>
+                {/* 💡 가격 보정 및 통화 단위 가독성 상향 */}
+                <span className="text-base md:text-lg font-mono font-bold text-slate-100 block mt-0.5">{Math.floor(stats.usdc_krw).toLocaleString()} 원</span>
+                <span className="text-[9px] text-slate-500 font-sans">환율 + 김치프리미엄 보정가</span>
               </div>
             </div>
           </section>
 
           {/* 섹션 4: 글로벌 증시 */}
-          <section className="bg-slate-900/40 border border-slate-800/60 p-4 rounded-xl">
+          <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner">
             <h3 className="text-sm font-bold text-slate-200 flex items-center gap-1.5 mb-4">
               <Globe className="w-4 h-4 text-purple-400" /> 글로벌 증시 (미국 4대 지수)
             </h3>
@@ -338,7 +341,7 @@ export default function CryptoDashboard() {
           </section>
 
           {/* 섹션 5: 원자재 */}
-          <section className="bg-slate-900/40 border border-slate-800/60 p-4 rounded-xl">
+          <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner">
             <h3 className="text-sm font-bold text-slate-200 flex items-center gap-1.5 mb-4">
               <Landmark className="w-4 h-4 text-amber-500" /> 주요 원자재
             </h3>
