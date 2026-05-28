@@ -2,11 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { 
-  TrendingUp, TrendingDown, Monitor, Tablet, Smartphone, Globe, Landmark, 
-  BarChart3, Activity, PieChart, Coins, Flame, Building2, ArrowUpDown, 
-  Menu, X, LayoutDashboard, Database, Zap, Layers, ExternalLink, LineChart, Calendar, Scale
+  Menu, X, LayoutDashboard, Database, TrendingUp, TrendingDown, 
+  Monitor, Tablet, Smartphone, BarChart3, Activity, PieChart, 
+  Scale, Calendar, Building2, ArrowUpDown, Coins, Flame, Landmark, Zap, Layers, ExternalLink, LineChart
 } from "lucide-react";
-// 📊 차트 엔진 연동
 import { LineChart as ReLineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 
 interface CoinData {
@@ -18,7 +17,7 @@ interface CoinData {
   price_change_percentage_24h: number;
   market_cap: number;
   total_volume: number;
-  sparkline_in_7d?: { price: number[] }; // 💡 차트 배열 데이터 타입
+  sparkline_in_7d?: { price: number[] };
 }
 
 interface MarketStats {
@@ -63,7 +62,6 @@ export default function CryptoDashboard() {
 
   const fetchData = async () => {
     try {
-      // 💡 [차트 누락 긴급 패치] &sparkline=true 를 명시적으로 추가하여 차트용 데이터를 가져옵니다.
       const coinRes = await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,ripple,solana,tether,usd-coin&order=market_cap_desc&sparkline=true");
       const allCoinData = await coinRes.json();
       
@@ -89,8 +87,9 @@ export default function CryptoDashboard() {
         total_cap_change: gData.market_cap_change_percentage_24h_usd || 1.4,
         btc_d: gData.market_cap_percentage.btc,
         eth_d: gData.market_cap_percentage.eth,
-        xrp_d: (mainFour.find(c => c.id === "ripple")?.market_cap / totalCap) * 100 || 0,
-        sol_d: (mainFour.find(c => c.id === "solana")?.market_cap / totalCap) * 100 || 0,
+        // 💡 [교정 지점] 파라미터 c에 명시적으로 any 타입을 선언하여 린트 에러를 완전히 해결했습니다.
+        xrp_d: (mainFour.find((c: any) => c.id === "ripple")?.market_cap / totalCap) * 100 || 0,
+        sol_d: (mainFour.find((c: any) => c.id === "solana")?.market_cap / totalCap) * 100 || 0,
         total2_d: 100 - gData.market_cap_percentage.btc,
         total3_d: 100 - gData.market_cap_percentage.btc - gData.market_cap_percentage.eth,
         fng: parseInt(fngData.data[0].value),
@@ -166,15 +165,13 @@ export default function CryptoDashboard() {
           </div>
           <div className="flex items-center gap-2 text-xs text-emerald-500 font-mono bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
             <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-            {activePage === "dashboard" ? "MACRO HUB" : "ON-CHAIN HUB"}
+            {activePage === "dashboard" ? "MACRO" : "ON-CHAIN & DERIVATIVES"}
           </div>
         </header>
 
         <main className="space-y-8 pb-12">
           
-          {/* ====================================================
-              PAGE: 매크로 종합 대시보드
-             ==================================================== */}
+          {/* PAGE: 매크로 종합 대시보드 */}
           {activePage === "dashboard" && (
             <>
               <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner">
@@ -198,7 +195,6 @@ export default function CryptoDashboard() {
                           <h2 className="font-bold text-xs sm:text-sm mb-1 text-slate-300">{coin.name}</h2>
                           <p className="text-base sm:text-lg font-mono font-bold text-slate-100 mb-2">${coin.current_price.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
 
-                          {/* 💡 [복구 완료] 데스크톱/태블릿 7일 시세 차트 재활성화 */}
                           {viewMode !== "mobile" && chartData.length > 0 && (
                             <div className="w-full h-12 my-2 bg-slate-950/60 rounded-lg p-1 border border-slate-800/40">
                               <ResponsiveContainer width="100%" height="100%">
@@ -220,7 +216,7 @@ export default function CryptoDashboard() {
                 </div>
               </section>
 
-              {/* 크립토 시장 지표 (도미넌스 포함) */}
+              {/* 크립토 시장 지표 */}
               <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner space-y-6">
                 <h2 className="text-base md:text-lg font-bold text-slate-200 flex items-center gap-2"><BarChart3 className="w-5 h-5 text-orange-500" /> 크립토 시장 지표</h2>
                 <div className="grid grid-cols-3 gap-2 md:gap-4 text-center xs:text-left">
@@ -332,7 +328,6 @@ export default function CryptoDashboard() {
                 </div>
 
                 <div className={`grid gap-4 ${viewMode === "mobile" ? "grid-cols-1" : "grid-cols-1 md:grid-cols-3"}`}>
-                  {/* 💡 [추세 반영] MVRV Ratio */}
                   <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-lg flex flex-col justify-between space-y-3">
                     <div className="flex justify-between items-center w-full">
                       <span className="text-sm font-bold text-emerald-400 font-mono uppercase">MVRV Ratio</span>
@@ -346,7 +341,6 @@ export default function CryptoDashboard() {
                     </div>
                   </div>
 
-                  {/* 💡 [추세 반영] NVT Ratio */}
                   <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-lg flex flex-col justify-between space-y-3">
                     <div className="flex justify-between items-center w-full">
                       <span className="text-sm font-bold text-blue-400 font-mono uppercase">NVT Ratio</span>
@@ -360,7 +354,6 @@ export default function CryptoDashboard() {
                     </div>
                   </div>
 
-                  {/* 💡 [추세 반영] 거래소 고래 유입량 */}
                   <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-lg flex flex-col justify-between space-y-3">
                     <div className="flex justify-between items-center w-full">
                       <span className="text-sm font-bold text-orange-400 font-sans uppercase">거래소 고래 유입</span>
