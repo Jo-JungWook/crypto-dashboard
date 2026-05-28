@@ -25,8 +25,8 @@ interface MarketStats {
   fng: number;
   fng_text: string;
   kimchi: number;
-  usdt_krw: number; // 원화 가격으로 교정
-  usdc_krw: number; // 원화 가격으로 교정
+  usdt_krw: number;
+  usdc_krw: number;
 }
 
 export default function CryptoDashboard() {
@@ -38,7 +38,7 @@ export default function CryptoDashboard() {
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<"desktop" | "tablet" | "mobile">("desktop");
 
-  const usdToKrwRate = 1504.60; // 2026년 5월 기준 고정 환율 설정
+  const usdToKrwRate = 1504.60; 
 
   const translateFng = (text: string) => {
     const lower = text.toLowerCase();
@@ -76,10 +76,9 @@ export default function CryptoDashboard() {
       const xrpD = xrp ? (xrp.market_cap / totalCap) * 100 : 0;
       const solD = sol ? (sol.market_cap / totalCap) * 100 : 0;
 
-      const currentKimchi = 1.2; // 김치 프리미엄 기준값 (%)
+      const currentKimchi = 1.2; 
       const kimchiMultiplier = 1 + (currentKimchi / 100);
 
-      // 💡 [가격 오류 수정] 달러 가격에 환율과 김프 비중을 연동한 진짜 국내 거래원화값 계산
       const realUsdtKrw = usdtItem ? usdtItem.current_price * usdToKrwRate * kimchiMultiplier : usdToKrwRate * kimchiMultiplier;
       const realUsdcKrw = usdcItem ? usdcItem.current_price * usdToKrwRate * kimchiMultiplier : usdToKrwRate * kimchiMultiplier;
 
@@ -145,7 +144,7 @@ export default function CryptoDashboard() {
 
         <main className="space-y-8 pb-12">
           
-          {/* 📌 스타일 통일 섹션 1: 주요 가상자산 (하단과 동일하게 bg-slate-900/40 처리) */}
+          {/* 섹션 1: 주요 가상자산 */}
           <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner">
             <h2 className="text-base md:text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
               📊 주요 가상자산
@@ -181,7 +180,7 @@ export default function CryptoDashboard() {
             )}
           </section>
 
-          {/* 📌 스타일 통일 섹션 2: 크립토 시장 지표 */}
+          {/* 섹션 2: 크립토 시장 지표 */}
           <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner space-y-6">
             <h2 className="text-base md:text-lg font-bold text-slate-200 flex items-center gap-2">
               <BarChart3 className="w-5 h-5 text-orange-500" /> 크립토 시장 지표
@@ -287,9 +286,9 @@ export default function CryptoDashboard() {
 
           {/* 섹션 3: 외환 및 스테이블코인 실시간 가격 */}
           <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner">
-            <h3 className="text-sm font-bold text-slate-200 flex items-center gap-1.5 mb-4">
-              <Coins className="w-4 h-4 text-sky-400" /> 외환 및 스테이블코인 실시간 가격
-            </h3>
+            <h2 className="text-base md:text-lg font-bold text-slate-200 mb-4 flex items-center gap-1.5">
+              <Coins className="w-5 h-5 text-sky-400" /> 외환 및 스테이블코인 실시간 가격
+            </h2>
             <div className={`grid gap-3 ${viewMode === "mobile" ? "grid-cols-1" : "grid-cols-3"}`}>
               <div className="bg-slate-900 border border-slate-800/80 p-3.5 rounded-lg">
                 <span className="text-[10px] text-slate-400 block font-medium">원/달러 환율 (FX)</span>
@@ -298,13 +297,11 @@ export default function CryptoDashboard() {
               </div>
               <div className="bg-slate-900 border border-slate-800/80 p-3.5 rounded-lg">
                 <span className="text-[10px] text-emerald-400 block font-medium">테더 (USDT) 국내 가격</span>
-                {/* 💡 가격 보정 및 통화 단위 가독성 상향 */}
                 <span className="text-base md:text-lg font-mono font-bold text-slate-100 block mt-0.5">{Math.floor(stats.usdt_krw).toLocaleString()} 원</span>
                 <span className="text-[9px] text-slate-500 font-sans">환율 + 김치프리미엄 보정가</span>
               </div>
               <div className="bg-slate-900 border border-slate-800/80 p-3.5 rounded-lg">
                 <span className="text-[10px] text-blue-400 block font-medium">써클 (USDC) 국내 가격</span>
-                {/* 💡 가격 보정 및 통화 단위 가독성 상향 */}
                 <span className="text-base md:text-lg font-mono font-bold text-slate-100 block mt-0.5">{Math.floor(stats.usdc_krw).toLocaleString()} 원</span>
                 <span className="text-[9px] text-slate-500 font-sans">환율 + 김치프리미엄 보정가</span>
               </div>
@@ -313,9 +310,9 @@ export default function CryptoDashboard() {
 
           {/* 섹션 4: 글로벌 증시 */}
           <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner">
-            <h3 className="text-sm font-bold text-slate-200 flex items-center gap-1.5 mb-4">
-              <Globe className="w-4 h-4 text-purple-400" /> 글로벌 증시 (미국 4대 지수)
-            </h3>
+            <h2 className="text-base md:text-lg font-bold text-slate-200 mb-4 flex items-center gap-1.5">
+              <Globe className="w-5 h-5 text-purple-400" /> 글로벌 증시 (미국 4대 지수)
+            </h2>
             <div className={`grid gap-3 ${viewMode === "mobile" ? "grid-cols-2" : "grid-cols-4"}`}>
               <div className="bg-slate-900 border border-slate-800/80 p-3 rounded-lg">
                 <span className="text-[10px] text-slate-500 block font-medium">나스닥 100</span>
@@ -342,9 +339,9 @@ export default function CryptoDashboard() {
 
           {/* 섹션 5: 원자재 */}
           <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner">
-            <h3 className="text-sm font-bold text-slate-200 flex items-center gap-1.5 mb-4">
-              <Landmark className="w-4 h-4 text-amber-500" /> 주요 원자재
-            </h3>
+            <h2 className="text-base md:text-lg font-bold text-slate-200 mb-4 flex items-center gap-1.5">
+              <Landmark className="w-5 h-5 text-amber-500" /> 주요 원자재
+            </h2>
             <div className="grid grid-cols-2 gap-3 text-[11px]">
               <div className="bg-slate-900 border border-slate-800/80 p-3 rounded-lg">
                 <span className="text-slate-500 block">달러 인덱스 (DXY)</span>
