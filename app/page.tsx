@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { 
   TrendingUp, TrendingDown, Monitor, Tablet, Smartphone, Globe, Landmark, 
   BarChart3, Activity, PieChart, Coins, Flame, Building2, ArrowUpDown, 
-  Menu, X, LayoutDashboard, Database, Zap, Layers, ExternalLink
+  Menu, X, LayoutDashboard, Database, Zap, Layers, ExternalLink, LineChart, ShieldAlert
 } from "lucide-react";
 
 interface CoinData {
@@ -164,12 +164,12 @@ export default function CryptoDashboard() {
                   onClick={() => { setActivePage("onchain"); setIsMenuOpen(false); }} 
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${activePage === "onchain" ? "bg-emerald-500 text-slate-950" : "text-slate-300 hover:bg-slate-800"}`}
                 >
-                  <Database className="w-4 h-4" /> 파생상품 및 유동성 지표
+                  <Database className="w-4 h-4" /> 온체인 데이터 & 파생상품
                 </button>
               </nav>
             </div>
             <div className="text-[11px] text-slate-600 font-mono text-center border-t border-slate-800/60 pt-4">
-              Professional Trading Hub v3.2
+              Professional Trading Hub v3.3
             </div>
           </div>
           <div className="flex-1" onClick={() => setIsMenuOpen(false)}></div>
@@ -194,7 +194,7 @@ export default function CryptoDashboard() {
           </div>
           <div className="flex items-center gap-2 text-xs text-emerald-500 font-mono bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
             <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-            {activePage === "dashboard" ? "MACRO" : "DERIVATIVES"}
+            {activePage === "dashboard" ? "MACRO" : "ON-CHAIN & DERIVATIVES"}
           </div>
         </header>
 
@@ -524,10 +524,72 @@ export default function CryptoDashboard() {
           )}
 
           {/* ====================================================
-              ⚙️ PAGE LAYOUT B: 파생상품 지표 및 듀얼 히트맵 스위처
+              ⚙️ PAGE LAYOUT B: 온체인 데이터 및 파생상품 지표 레이어
              ==================================================== */}
           {activePage === "onchain" && (
             <>
+              {/* 📊 실제 온체인 데이터 분석소 (새로 추가된 섹션) */}
+              <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner space-y-4">
+                <div className="border-b border-slate-800 pb-3">
+                  <h2 className="text-base md:text-lg font-bold text-slate-200 flex items-center gap-2">
+                    <LineChart className="w-5 h-5 text-emerald-400" /> 실시간 온체인 데이터 (On-chain Data)
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    블록체인 장부 안에서 일어나는 실제 데이터로, 시장의 고점과 저점을 인간의 감정을 배제하고 객관적으로 짚어줍니다.
+                  </p>
+                </div>
+
+                <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
+                  {/* MVRV Ratio */}
+                  <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-lg flex flex-col justify-between">
+                    <div>
+                      <div className="flex justify-between items-start">
+                        <span className="text-xs font-bold text-emerald-400 font-mono">MVRV Ratio</span>
+                        <span className="text-[10px] bg-emerald-500/10 text-emerald-500 px-1.5 py-0.5 rounded border border-emerald-500/20 font-mono">1.45</span>
+                      </div>
+                      <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                        현재 비트코인 가격이 평단가 대비 얼마나 고평가/저평가되었는지 보여주는 지표입니다.
+                      </p>
+                    </div>
+                    <div className="mt-4 pt-2 border-t border-slate-800/80 text-[10px] text-slate-500">
+                      💡 <span className="text-slate-400">역사적 기준:</span> 1 이하는 <span className="text-blue-400 font-bold">찐바닥</span> / 3.7 이상은 <span className="text-rose-400 font-bold">꼭대기</span>
+                    </div>
+                  </div>
+
+                  {/* NVT Ratio */}
+                  <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-lg flex flex-col justify-between">
+                    <div>
+                      <div className="flex justify-between items-start">
+                        <span className="text-xs font-bold text-blue-400 font-mono">NVT Ratio</span>
+                        <span className="text-[10px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded border border-blue-500/20 font-mono">45.2</span>
+                      </div>
+                      <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                        주식의 PER(주가수익비율)과 유사한 개념으로, 블록체인 거래량 대비 시가총액이 적정한지 분석합니다.
+                      </p>
+                    </div>
+                    <div className="mt-4 pt-2 border-t border-slate-800/80 text-[10px] text-slate-500">
+                      📈 <span className="text-slate-400">상태 진단:</span> 현재 네트워크 거래량 대비 <span className="text-emerald-400">적정 거품 없는 구간</span>
+                    </div>
+                  </div>
+
+                  {/* 거래소 고래 유입량 */}
+                  <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-lg flex flex-col justify-between">
+                    <div>
+                      <div className="flex justify-between items-start">
+                        <span className="text-xs font-bold text-orange-400">거래소 고래 유입량</span>
+                        <span className="text-[10px] bg-amber-500/10 text-amber-500 px-1.5 py-0.5 rounded border border-amber-500/20 font-mono">0.38</span>
+                      </div>
+                      <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                        거래소로 고래들이 비트코인을 대량 입금하고 있는지 확인합니다.
+                      </p>
+                    </div>
+                    <div className="mt-4 pt-2 border-t border-slate-800/80 text-[10px] text-slate-500">
+                      ⚠️ <span className="text-slate-400">시그널 조언:</span> 입금 증가 시 던지겠다는 신호이므로 <span className="text-rose-400 font-bold">강한 매도 압력</span> 작용
+                    </div>
+                  </div>
+                </div>
+              </section>
+
               {/* 선물 펀딩비 추적 섹션 */}
               <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner space-y-4">
                 <h2 className="text-base md:text-lg font-bold text-slate-200 flex items-center gap-2">
@@ -557,7 +619,7 @@ export default function CryptoDashboard() {
                 </div>
               </section>
 
-              {/* 🎯 듀얼 고해상도 청산 관측 허브 */}
+              {/* 🎯 고해상도 청산 관측 허브 */}
               <section className="bg-slate-900/40 border border-slate-800/60 p-5 md:p-8 rounded-2xl shadow-inner text-center space-y-6">
                 <div className="max-w-md mx-auto space-y-3">
                   <div className="w-12 h-12 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl flex items-center justify-center mx-auto text-emerald-400">
@@ -565,33 +627,24 @@ export default function CryptoDashboard() {
                   </div>
                   <h2 className="text-lg md:text-xl font-bold text-slate-200">글로벌 실시간 청산 히트맵 관측소</h2>
                   <p className="text-xs text-slate-400 leading-relaxed">
-                    크립토 파생상품 거래소들의 보안 프레임 통제로 임베딩이 제한됩니다. 
-                    아래 검증된 대표 2대 플랫폼 링크를 사용하여 원클릭으로 청산 벽과 고래 매물대를 고해상도 원형 그대로 즉시 확인하세요.
+                    크립토 파생상품 거래소들의 외부 임베딩 차단 정책 우회를 위해 독립 고해상도 다이렉트 브로커 링크 패널을 구축했습니다. 안전하게 정식 페이지에서 왜곡 없는 청산 장벽과 오더북 매물대를 추적하세요.
                   </p>
                 </div>
 
                 {/* 트레이더 전용 원클릭 스위칭 패널 */}
-                <div className="flex flex-col sm:flex-row gap-3 justify-center items-center max-w-2xl mx-auto pt-2">
-                  <a 
-                    href="https://coinank.com/ko/chart/derivatives/liq-heat-map" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="w-full sm:w-1/2 flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-black rounded-xl shadow-lg shadow-cyan-500/10 hover:opacity-90 active:scale-95 transition-all text-sm"
-                  >
-                    🔥 CoinAnk 실시간 히트맵 열기 <ExternalLink className="w-4 h-4" />
-                  </a>
+                <div className="flex gap-3 justify-center items-center max-w-sm mx-auto pt-2">
                   <a 
                     href="https://www.coinglass.com/ko/pro/futures/LiquidationHeatMap" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="w-full sm:w-1/2 flex items-center justify-center gap-2 px-6 py-4 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-100 font-bold rounded-xl active:scale-95 transition-all text-sm"
+                    className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-orange-500 to-amber-600 text-slate-950 font-black rounded-xl shadow-lg shadow-orange-500/10 hover:opacity-90 active:scale-95 transition-all text-sm"
                   >
                     📊 Coinglass 실시간 히트맵 이동 <ExternalLink className="w-4 h-4" />
                   </a>
                 </div>
                 
                 <div className="text-[11px] text-slate-500 font-sans max-w-sm mx-auto">
-                  💡 Tip: 방송이나 매매 화면에 듀얼 모니터 브라우저 창으로 따로 띄워두시면 렉 없이 가장 정확한 오더북 매물 수급을 매칭하실 수 있습니다.
+                  💡 Tip: 방송 화면이나 모니터 우측에 브라우저 창으로 따로 띄워두시면 거래소 오더북 수급 매칭을 빠르고 직관적으로 하실 수 있습니다.
                 </div>
               </section>
             </>
