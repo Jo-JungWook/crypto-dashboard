@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { 
   Menu, X, LayoutDashboard, Database, TrendingUp, TrendingDown, 
   Monitor, Tablet, Smartphone, BarChart3, Activity, PieChart, 
-  Scale, Calendar, Building2, ArrowUpDown, Coins, Flame, Landmark, Zap, Layers, ExternalLink, LineChart, MessageSquare, BarChart
+  Scale, Calendar, Building2, ArrowUpDown, Coins, Flame, Landmark, Zap, Layers, ExternalLink, LineChart, Send
 } from "lucide-react";
 import { LineChart as ReLineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 
@@ -229,7 +229,7 @@ export default function CryptoDashboard() {
           )}
 
           {/* ====================================================
-              PAGE: 온체인 데이터 분석소 (CVD & Fire Chart 통합)
+              PAGE: 온체인 데이터 분석소 (차단 버그 완벽 수정)
              ==================================================== */}
           {activePage === "onchain" && (
             <>
@@ -254,27 +254,32 @@ export default function CryptoDashboard() {
                 </div>
               </section>
 
-              {/* 💡 [신규 추가] 실시간 오더플로우(CVD) 및 파이어 차트 피드 섹션 */}
-              <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner space-y-4 overflow-hidden">
-                <div className="flex justify-between items-center border-b border-slate-800 pb-3">
-                  <h2 className="text-base md:text-lg font-bold text-cyan-400 flex items-center gap-2">
-                    <BarChart className="w-5 h-5" /> 실시간 CVD 및 파이어 차트 분석
-                  </h2>
-                  <a href="https://t.me/sealcryptocvd" target="_blank" className="text-[10px] text-slate-400 flex items-center gap-1 hover:text-slate-200 transition-colors">
-                    원본 채널 방문 <ExternalLink className="w-3 h-3" />
+              {/* 💡 [차단 해결 완결 패치] 텔레그램 에러 박스 철거 후 원클릭 인텔리전스 라우터 가동 */}
+              <section className="bg-slate-900/40 border border-slate-800/60 p-6 md:p-10 rounded-2xl shadow-inner text-center space-y-6">
+                <div className="max-w-md mx-auto space-y-3">
+                  <div className="w-12 h-12 bg-sky-500/10 border border-sky-500/30 rounded-2xl flex items-center justify-center mx-auto text-sky-400">
+                    <Send className="w-6 h-6" />
+                  </div>
+                  <h2 className="text-lg md:text-xl font-bold text-slate-200">실시간 CVD 및 파이어 차트 분석 채널</h2>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    텔레그램 내부 보안 모듈로 인해 대시보드 인라인 임베딩이 전면 통제되었습니다. 
+                    아래 공식 다이렉트 이동 버튼을 활용하시면 고래들의 실시간 매집 구간(CVD)과 거래량별 매입 그래프 원형을 텔레그램 앱 혹은 웹으로 렉 없이 즉시 관측하실 수 있습니다.
+                  </p>
+                </div>
+
+                <div className="flex justify-center pt-2">
+                  <a 
+                    href="https://t.me/sealcryptocvd" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-8 py-4 bg-gradient-to-r from-sky-500 to-blue-600 text-white font-black rounded-xl shadow-xl shadow-sky-500/20 hover:opacity-95 active:scale-95 transition-all text-sm tracking-wide"
+                  >
+                    🚀 실시간 CVD / 파이어 차트 분석 피드 열기 <ExternalLink className="w-4 " />
                   </a>
                 </div>
-                <p className="text-[11px] text-slate-500 -mt-2">고래들의 매집 현황(CVD)과 주요 가격대별 청산벽/매물대(Fire Chart) 실시간 업데이트 피드입니다.</p>
                 
-                {/* 📱 텔레그램 라이브 피드 임베딩 모듈 */}
-                <div className="w-full h-[600px] bg-slate-950 rounded-xl overflow-hidden border border-slate-800 shadow-2xl relative">
-                  <iframe 
-                    src="https://t.me/s/sealcryptocvd" 
-                    className="w-full h-full border-none"
-                    title="Telegram CVD Feed"
-                    loading="lazy"
-                  />
-                  <div className="absolute top-0 left-0 w-full h-12 bg-gradient-to-b from-slate-950/40 to-transparent pointer-events-none"></div>
+                <div className="text-[11px] text-slate-500 max-w-sm mx-auto">
+                  💡 Tip: 버튼을 누르시면 PC 텔레그램이나 스마트폰 앱으로 즉시 연결되어 시황 브리핑 이미지를 고화질로 가장 빠르게 확인하실 수 있습니다.
                 </div>
               </section>
 
