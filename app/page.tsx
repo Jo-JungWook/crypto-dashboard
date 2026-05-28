@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { TrendingUp, TrendingDown, RefreshCw, Monitor, Tablet, Smartphone } from "lucide-react";
+import { TrendingUp, TrendingDown, Monitor, Tablet, Smartphone } from "lucide-react";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 
 interface CoinData {
@@ -24,7 +24,8 @@ export default function CryptoDashboard() {
   const [viewMode, setViewMode] = useState<"desktop" | "tablet" | "mobile">("desktop");
 
   const fetchCryptoData = async () => {
-    setLoading(true);
+    // 최초 로딩 시에만 스피너를 보여주고, 이후 5초마다 자동 동기화될 때는 
+    // 화면이 깜빡이지 않고 자연스럽게 가격만 초기화되도록 loading 상태를 세분화합니다.
     try {
       const res = await fetch(
         "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,ripple,solana&order=market_cap_desc&sparkline=true"
@@ -40,7 +41,8 @@ export default function CryptoDashboard() {
 
   useEffect(() => {
     fetchCryptoData();
-    const interval = setInterval(fetchCryptoData, 60000);
+    // 💡 동기화 주기를 5초(5000ms)로 대폭 단축하여 수시로 가격을 최신화합니다.
+    const interval = setInterval(fetchCryptoData, 5000); 
     return () => clearInterval(interval);
   }, []);
 
@@ -56,7 +58,7 @@ export default function CryptoDashboard() {
       {/* 📦 대시보드 본체 컨테이너 */}
       <div className={`w-full transition-all duration-300 bg-slate-950 px-1 ${getWidthClass()}`}>
         
-        {/* 상단 헤더 */}
+        {/* 상단 헤더 (우측 새로고침 버튼 영역 삭제) */}
         <header className="flex justify-between items-center mb-6 border-b border-slate-800 pb-5">
           <div className="flex items-center gap-2 md:gap-3">
             <img 
@@ -66,14 +68,11 @@ export default function CryptoDashboard() {
             />
             <h1 className="text-xl md:text-2xl font-bold tracking-tight">전업코인부자 대시보드</h1>
           </div>
-          <button
-            onClick={fetchCryptoData}
-            disabled={loading}
-            className="flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm transition-all disabled:opacity-50"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-            {loading ? "갱신 중..." : "새로고침"}
-          </button>
+          {/* 📡 실시간 동기화 중임을 알려주는 은은한 인디케이터 표시 */}
+          <div className="flex items-center gap-2 text-xs text-emerald-500 font-mono bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+            <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+            LIVE
+          </div>
         </header>
 
         {/* 메인 보드 컨텐츠 */}
@@ -105,7 +104,7 @@ export default function CryptoDashboard() {
                 return (
                   <div key={coin.id} className="bg-slate-900 border border-slate-800 rounded-xl p-3.5 shadow-xl hover:border-slate-700 transition-all flex flex-col justify-between">
                     <div>
-                      {/* 💡 개편된 상단 영역: 이미지와 등락률 뱃지를 양 끝으로 완벽 격리 */}
+                      {/* 상단 영역 */}
                       <div className="flex justify-between items-center mb-1.5">
                         <div className="flex items-center gap-1.5">
                           <img src={coin.image} alt={coin.name} className="w-7 h-7 rounded-full" />
@@ -120,7 +119,7 @@ export default function CryptoDashboard() {
                         </span>
                       </div>
 
-                      {/* 💡 코인 풀네임(이름)은 아래 단독 줄로 배치하여 가로폭 침범 차단 */}
+                      {/* 코인 풀네임 */}
                       <div className="mb-3">
                         <h2 className="font-bold text-sm sm:text-base tracking-tight text-slate-100 truncate">{coin.name}</h2>
                       </div>
@@ -136,7 +135,7 @@ export default function CryptoDashboard() {
                         </p>
                       </div>
 
-                      {/* 📊 미니 선 차트 (모바일 뷰모드일 때는 안 보임) */}
+                      {/* 📊 미니 선 차트 */}
                       {viewMode !== "mobile" && (
                         <div className="hidden sm:block w-full h-20 my-3 bg-slate-950/40 rounded-lg p-2 border border-slate-800/50">
                           <ResponsiveContainer width="100%" height="100%">
