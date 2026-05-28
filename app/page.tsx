@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { 
   Menu, X, LayoutDashboard, Database, TrendingUp, TrendingDown, 
   Monitor, Tablet, Smartphone, BarChart3, Activity, PieChart, 
-  Scale, Calendar, Building2, ArrowUpDown, Coins, Flame, Landmark, Zap, Layers, ExternalLink, LineChart, Send
+  Scale, Calendar, Building2, ArrowUpDown, Coins, Flame, Landmark, Zap, Layers, ExternalLink, LineChart, Send, BarChart
 } from "lucide-react";
 import { LineChart as ReLineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 
@@ -78,15 +78,20 @@ export default function CryptoDashboard() {
       const currentKimchi = 1.2; 
       const kimchiMultiplier = 1 + (currentKimchi / 100);
 
+      const btcCapPercentage = gData.market_cap_percentage.btc || 0;
+      const ethCapPercentage = gData.market_cap_percentage.eth || 0;
+      const xrpCap = mainFour.find((c: any) => c.id === "ripple")?.market_cap || 0;
+      const solCap = mainFour.find((c: any) => c.id === "solana")?.market_cap || 0;
+
       setStats({
         total_cap: totalCap,
         total_cap_change: gData.market_cap_change_percentage_24h_usd || 1.4,
-        btc_d: gData.market_cap_percentage.btc,
-        eth_d: gData.market_cap_percentage.eth,
-        xrp_d: (mainFour.find((c: any) => c.id === "ripple")?.market_cap / totalCap) * 100 || 0,
-        sol_d: (mainFour.find((c: any) => c.id === "solana")?.market_cap / totalCap) * 100 || 0,
-        total2_d: 100 - gData.market_cap_percentage.btc,
-        total3_d: 100 - gData.market_cap_percentage.btc - gData.market_cap_percentage.eth,
+        btc_d: btcCapPercentage,
+        eth_d: ethCapPercentage,
+        xrp_d: (xrpCap / totalCap) * 100,
+        sol_d: (solCap / totalCap) * 100,
+        total2_d: 100 - btcCapPercentage,
+        total3_d: 100 - btcCapPercentage - ethCapPercentage,
         fng: parseInt(fngData.data[0].value),
         fng_change: fngData.data[1] ? parseInt(fngData.data[0].value) - parseInt(fngData.data[1].value) : 2, 
         fng_text: translateFng(fngData.data[0].value_classification),
@@ -205,6 +210,43 @@ export default function CryptoDashboard() {
                 </div>
               </section>
 
+              {/* 💡 [긴급 복구] 실시간 도미넌스 매트릭스 섹션 */}
+              <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner space-y-4">
+                <h2 className="text-base md:text-lg font-bold text-slate-200 flex items-center gap-2">
+                  <PieChart className="w-5 h-5 text-indigo-400" /> 실시간 자산별 도미넌스 (Dominance)
+                </h2>
+                <div className={`grid gap-3 ${viewMode === "mobile" ? "grid-cols-2" : "grid-cols-2 lg:grid-cols-4"}`}>
+                  <div className="bg-slate-900 border border-slate-800 p-3.5 rounded-xl flex flex-col justify-between">
+                    <div>
+                      <span className="text-[10px] text-orange-400 font-mono font-bold uppercase bg-orange-400/5 px-1.5 py-0.5 rounded border border-orange-400/10">BTC Dominance</span>
+                      <p className="text-xl font-mono font-black text-slate-100 mt-2">{stats.btc_d.toFixed(2)}%</p>
+                    </div>
+                    <span className="text-[10px] text-slate-500 mt-2 block">시장 지배력 절대 지표</span>
+                  </div>
+                  <div className="bg-slate-900 border border-slate-800 p-3.5 rounded-xl flex flex-col justify-between">
+                    <div>
+                      <span className="text-[10px] text-blue-400 font-mono font-bold uppercase bg-blue-400/5 px-1.5 py-0.5 rounded border border-blue-400/10">ETH Dominance</span>
+                      <p className="text-xl font-mono font-black text-slate-100 mt-2">{stats.eth_d.toFixed(2)}%</p>
+                    </div>
+                    <span className="text-[10px] text-slate-500 mt-2 block">알트 캡틴 지배력 수치</span>
+                  </div>
+                  <div className="bg-slate-900 border border-slate-800 p-3.5 rounded-xl flex flex-col justify-between">
+                    <div>
+                      <span className="text-[10px] text-purple-400 font-mono font-bold uppercase bg-purple-400/5 px-1.5 py-0.5 rounded border border-purple-400/10">TOTAL 2 (Alt Total)</span>
+                      <p className="text-xl font-mono font-black text-purple-400 mt-2">{stats.total2_d.toFixed(2)}%</p>
+                    </div>
+                    <span className="text-[10px] text-slate-500 mt-2 block">비트 제외 전체 알트 비율</span>
+                  </div>
+                  <div className="bg-slate-900 border border-slate-800 p-3.5 rounded-xl flex flex-col justify-between">
+                    <div>
+                      <span className="text-[10px] text-pink-400 font-mono font-bold uppercase bg-pink-400/5 px-1.5 py-0.5 rounded border border-pink-400/10">TOTAL 3 (Pure Alts)</span>
+                      <p className="text-xl font-mono font-black text-pink-400 mt-2">{stats.total3_d.toFixed(2)}%</p>
+                    </div>
+                    <span className="text-[10px] text-slate-500 mt-2 block">비트+이더 제외 낙수 효과 지표</span>
+                  </div>
+                </div>
+              </section>
+
               {/* 거시경제 섹션 */}
               <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner space-y-4">
                 <h2 className="text-base md:text-lg font-bold text-slate-200 flex items-center gap-1.5"><Scale className="w-5 h-5 text-emerald-400" /> 거시경제 핵심 추가 지표</h2>
@@ -229,7 +271,7 @@ export default function CryptoDashboard() {
           )}
 
           {/* ====================================================
-              PAGE: 온체인 데이터 분석소 (차단 버그 완벽 수정)
+              PAGE: 온체인 데이터 분석소
              ==================================================== */}
           {activePage === "onchain" && (
             <>
@@ -254,7 +296,7 @@ export default function CryptoDashboard() {
                 </div>
               </section>
 
-              {/* 💡 [차단 해결 완결 패치] 텔레그램 에러 박스 철거 후 원클릭 인텔리전스 라우터 가동 */}
+              {/* 텔레그램 다이렉트 브로커 모듈 */}
               <section className="bg-slate-900/40 border border-slate-800/60 p-6 md:p-10 rounded-2xl shadow-inner text-center space-y-6">
                 <div className="max-w-md mx-auto space-y-3">
                   <div className="w-12 h-12 bg-sky-500/10 border border-sky-500/30 rounded-2xl flex items-center justify-center mx-auto text-sky-400">
