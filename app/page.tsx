@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { 
   Menu, X, LayoutDashboard, Database, TrendingUp, TrendingDown, 
   Monitor, Tablet, Smartphone, BarChart3, Activity, PieChart, 
-  Scale, Calendar, Building2, ArrowUpDown, Coins, Flame, Landmark, Zap, Layers, ExternalLink, LineChart, Send, BarChart
+  Scale, Calendar, Building2, ArrowUpDown, Coins, Flame, Landmark, Zap, Layers, ExternalLink, LineChart, Send, FlameKindling
 } from "lucide-react";
 import { LineChart as ReLineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 
@@ -210,7 +210,7 @@ export default function CryptoDashboard() {
                 </div>
               </section>
 
-              {/* 💡 [긴급 복구] 실시간 도미넌스 매트릭스 섹션 */}
+              {/* 실시간 도미넌스 매트릭스 */}
               <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner space-y-4">
                 <h2 className="text-base md:text-lg font-bold text-slate-200 flex items-center gap-2">
                   <PieChart className="w-5 h-5 text-indigo-400" /> 실시간 자산별 도미넌스 (Dominance)
@@ -287,7 +287,7 @@ export default function CryptoDashboard() {
                   </div>
                   <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-lg flex flex-col justify-between space-y-3">
                     <div className="flex justify-between items-center w-full"><span className="text-sm font-bold text-blue-400 font-mono uppercase">NVT Ratio</span><div className="flex flex-col items-end"><span className="text-sm font-mono font-bold text-slate-100">45.2</span><span className="text-[10px] text-rose-500 flex items-center gap-0.5 mt-1"><TrendingDown className="w-2.5 h-2.5" />-1.5</span></div></div>
-                    <div className="pt-2 border-t border-slate-800/80 text-[11px] text-slate-400 leading-normal">📈 <span className="text-slate-300">상태:</span> 거품 없는 적정 구간</div>
+                    <div className="pt-2 border-t border-slate-800/80 text-[11px] text-slate-400 leading-normal">📈 <span className="text-slate-300">状态:</span> 거품 없는 적정 구간</div>
                   </div>
                   <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-lg flex flex-col justify-between space-y-3">
                     <div className="flex justify-between items-center w-full"><span className="text-sm font-bold text-orange-400 font-sans uppercase">거래소 고래 유입</span><div className="flex flex-col items-end"><span className="text-sm font-mono font-bold text-slate-100">0.38</span><span className="text-[10px] text-emerald-500 flex items-center gap-0.5 mt-1"><TrendingUp className="w-2.5 h-2.5" />+0.05</span></div></div>
@@ -319,9 +319,50 @@ export default function CryptoDashboard() {
                     🚀 실시간 CVD / 파이어 차트 분석 피드 열기 <ExternalLink className="w-4 " />
                   </a>
                 </div>
-                
-                <div className="text-[11px] text-slate-500 max-w-sm mx-auto">
-                  💡 Tip: 버튼을 누르시면 PC 텔레그램이나 스마트폰 앱으로 즉시 연결되어 시황 브리핑 이미지를 고화질로 가장 빠르게 확인하실 수 있습니다.
+              </section>
+
+              {/* 💡 [긴급 복구] 실시간 청산 히트맵 매트릭스 */}
+              <section className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner space-y-4">
+                <h2 className="text-base md:text-lg font-bold text-rose-500 flex items-center gap-2">
+                  <Flame className="w-5 h-5 text-rose-500 animate-pulse" /> 파생상품 실시간 청산 맵 매트릭스 (Liquidation Map)
+                </h2>
+                <div className={`grid gap-4 ${viewMode === "mobile" ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2"}`}>
+                  <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
+                    <div className="flex justify-between items-center border-b border-slate-800/80 pb-2">
+                      <span className="text-xs font-bold text-emerald-400 font-mono">🟢 숏 청산 레벨 (상방 저항대)</span>
+                      <span className="text-[10px] font-mono text-slate-500">Short Liquidation</span>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="bg-slate-950/60 border border-slate-800/40 p-2.5 rounded-lg flex justify-between items-center text-xs">
+                        <span className="font-mono text-slate-300 font-bold">LV 1 (강력 저항)</span>
+                        <span className="font-mono font-extrabold text-emerald-500">$82,500 ~ $83,200</span>
+                      </div>
+                      <div className="bg-slate-950/60 border border-slate-800/40 p-2.5 rounded-lg flex justify-between items-center text-xs">
+                        <span className="font-mono text-slate-400">LV 2 (중간 마일)</span>
+                        <span className="font-mono font-bold text-emerald-500/80">$84,000</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
+                    <div className="flex justify-between items-center border-b border-slate-800/80 pb-2">
+                      <span className="text-xs font-bold text-rose-400 font-mono">🔴 롱 청산 레벨 (하방 지지대)</span>
+                      <span className="text-[10px] font-mono text-slate-500">Long Liquidation</span>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="bg-slate-950/60 border border-slate-800/40 p-2.5 rounded-lg flex justify-between items-center text-xs">
+                        <span className="font-mono text-slate-300 font-bold">LV 1 (핵심 지지)</span>
+                        <span className="font-mono font-extrabold text-rose-500">$79,800 ~ $80,200</span>
+                      </div>
+                      <div className="bg-slate-950/60 border border-slate-800/40 p-2.5 rounded-lg flex justify-between items-center text-xs">
+                        <span className="font-mono text-slate-400">LV 2 (최종 마지노)</span>
+                        <span className="font-mono font-bold text-rose-500/80">$78,500</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-[11px] text-slate-500 bg-slate-950/40 border border-slate-800/40 px-3 py-2 rounded-xl">
+                  💡 <span className="text-slate-400">트레이딩 전략:</span> 고레버리지 청산 물량이 밀집된 구간은 세력들의 스퀴즈 타겟이 되기 쉽습니다. 상하방 핵심 매물대를 이탈하는지 여부를 실시간 시황 버튼과 교차 검증하세요.
                 </div>
               </section>
 
