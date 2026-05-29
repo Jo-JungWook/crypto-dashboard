@@ -47,7 +47,11 @@ export default function CryptoDashboard() {
   const [viewMode, setViewMode] = useState<"desktop" | "tablet" | "mobile">("desktop");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activePage, setActivePage] = useState<"dashboard" | "onchain" | "staking">("dashboard");
-
+  const stakingData = [
+    { exchange: "업비트", coin: "ETH", rate: "3.5%", status: "진행중" },
+    { exchange: "빗썸", coin: "SOL", rate: "6.2%", status: "모집중" },
+    { exchange: "코인원", coin: "ATOM", rate: "12.0%", status: "진행중" },
+  ];
   const usdToKrwRate = 1504.60; 
 
   const translateFng = (text: string) => {
@@ -136,9 +140,9 @@ export default function CryptoDashboard() {
               <button onClick={() => { setActivePage("dashboard"); setIsMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${activePage === "dashboard" ? "bg-emerald-500 text-slate-950" : "text-slate-300 hover:bg-slate-800"}`}><LayoutDashboard className="w-4 h-4" /> 매크로 종합 대시보드</button>
               <button onClick={() => { setActivePage("onchain"); setIsMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${activePage === "onchain" ? "bg-emerald-500 text-slate-950" : "text-slate-300 hover:bg-slate-800"}`}><Database className="w-4 h-4" /> 온체인 데이터 & 파생상품</button>
               <button onClick={() => { setActivePage("staking"); setIsMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${activePage === "staking" ? "bg-emerald-500 text-slate-950" : "text-slate-300 hover:bg-slate-800"}`}
->
-  <Zap className="w-4 h-4" /> 스테이킹 모아보기
-  </button>
+>          
+                <Zap className="w-4 h-4" /> 스테이킹 모아보기
+              </button>
             </nav>
           </div>
           <div className="flex-1" onClick={() => setIsMenuOpen(false)}></div>
@@ -554,6 +558,35 @@ export default function CryptoDashboard() {
               <p className="text-slate-400 mt-2">여기에 스테이킹 관련 상세 정보를 구현할 예정입니다.</p>
             </section>
           )}
+          {activePage === "staking" && (
+  <section className="bg-slate-900/40 border border-slate-800/60 p-6 rounded-2xl shadow-inner space-y-6">
+    <h2 className="text-xl font-bold text-slate-100 flex items-center gap-2">
+      <Zap className="w-5 h-5 text-yellow-400" /> 국내 거래소 스테이킹 현황
+    </h2>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {stakingData.map((item, index) => (
+        <div key={index} className="bg-slate-950 border border-slate-800 p-5 rounded-xl shadow-lg hover:border-emerald-500/50 transition-all">
+          <div className="flex justify-between items-start mb-4">
+            <span className="text-sm font-bold text-slate-300">{item.exchange}</span>
+            <span className={`text-[10px] px-2 py-0.5 rounded ${item.status === "진행중" ? "bg-emerald-500/10 text-emerald-400" : "bg-yellow-500/10 text-yellow-400"}`}>
+              {item.status}
+            </span>
+          </div>
+          <div className="flex justify-between items-end">
+            <div>
+              <p className="text-xs text-slate-500">코인명</p>
+              <p className="text-lg font-bold text-white">{item.coin}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-xs text-slate-500">연 이자율</p>
+              <p className="text-2xl font-black text-yellow-400">{item.rate}</p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+)}
         </main>
       </div>
 
