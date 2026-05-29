@@ -46,7 +46,7 @@ export default function CryptoDashboard() {
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<"desktop" | "tablet" | "mobile">("desktop");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [activePage, setActivePage] = useState<"dashboard" | "onchain">("dashboard");
+  const [activePage, setActivePage] = useState<"dashboard" | "onchain" | "staking">("dashboard");
 
   const usdToKrwRate = 1504.60; 
 
@@ -135,6 +135,10 @@ export default function CryptoDashboard() {
             <nav className="space-y-2">
               <button onClick={() => { setActivePage("dashboard"); setIsMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${activePage === "dashboard" ? "bg-emerald-500 text-slate-950" : "text-slate-300 hover:bg-slate-800"}`}><LayoutDashboard className="w-4 h-4" /> 매크로 종합 대시보드</button>
               <button onClick={() => { setActivePage("onchain"); setIsMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${activePage === "onchain" ? "bg-emerald-500 text-slate-950" : "text-slate-300 hover:bg-slate-800"}`}><Database className="w-4 h-4" /> 온체인 데이터 & 파생상품</button>
+              <button onClick={() => { setActivePage("staking"); setIsMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${activePage === "staking" ? "bg-emerald-500 text-slate-950" : "text-slate-300 hover:bg-slate-800"}`}
+>
+  <Zap className="w-4 h-4" /> 스테이킹 모아보기
+  </button>
             </nav>
           </div>
           <div className="flex-1" onClick={() => setIsMenuOpen(false)}></div>
@@ -544,7 +548,12 @@ export default function CryptoDashboard() {
               </section>
             </>
           )}
-
+          {activePage === "staking" && (
+            <section className="bg-slate-900/40 border border-slate-800/60 p-6 rounded-2xl text-center">
+              <h2 className="text-xl font-bold">스테이킹 모아보기 페이지</h2>
+              <p className="text-slate-400 mt-2">여기에 스테이킹 관련 상세 정보를 구현할 예정입니다.</p>
+            </section>
+          )}
         </main>
       </div>
 
