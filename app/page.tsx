@@ -622,62 +622,67 @@ export default function CryptoDashboard() {
             </>
           )}
           {activePage === "staking" && (
-            <section className="space-y-6 px-4 md:px-0 animate-fade-in w-full max-w-full overflow-hidden">
-              {/* 타이틀 영역 */}
-              <div className="bg-slate-900/40 border border-slate-800/60 p-6 rounded-2xl shadow-inner flex justify-between items-center gap-4">
-                <div>
-                  <h2 className="text-lg md:text-xl font-bold text-slate-100 flex items-center gap-2">
-                    ⚡ 거래소 API 실시간 연동 스테이킹 현황
+            <section className="space-y-4 px-2 md:px-0 animate-fade-in w-full max-w-full overflow-hidden select-none">
+              {/* 타이틀 영역 - 모바일 글자 크기 축소 및 한 줄 정렬 */}
+              <div className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl shadow-inner flex justify-between items-center gap-3">
+                <div className="min-w-0 flex-1">
+                  <h2 className="text-base md:text-xl font-bold text-slate-100 flex items-center gap-1.5 whitespace-nowrap overflow-hidden text-ellipsis">
+                    ⚡ 거래소 실시간 스테이킹 현황
                   </h2>
-                  <p className="text-slate-400 text-xs mt-1 break-all">
-                    실시간으로 거래소 마켓 API를 조회하여 새로운 상장 코인 및 스테이킹 데이터를 자동으로 수집합니다.
+                  <p className="text-slate-400 text-[11px] md:text-xs mt-1 hidden sm:block">
+                    실시간으로 거래소 마켓 API를 조회하여 최신 스테이킹 데이터를 자동 수집합니다.
                   </p>
                 </div>
-                <div className="flex-shrink-0 flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-full">
-                  <span className="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span>
-                  <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">API LIVE</span>
+                <div className="flex-shrink-0 flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 md:py-1.5 rounded-full">
+                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping"></span>
+                  <span className="text-[10px] font-bold text-emerald-400 tracking-wider">LIVE</span>
                 </div>
               </div>
 
               {/* 로딩 인디케이터 또는 메인 콘텐츠 */}
               {isLoading ? (
-                <div className="text-center py-20 bg-slate-900/20 border border-slate-800/40 rounded-2xl">
-                  <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                  <p className="text-sm text-slate-400">거래소 실시간 마켓 데이터를 가져오는 중입니다...</p>
+                <div className="text-center py-16 bg-slate-900/20 border border-slate-800/40 rounded-2xl">
+                  <div className="w-6 h-6 border-3 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+                  <p className="text-xs text-slate-400">마켓 데이터를 가져오는 중입니다...</p>
                 </div>
               ) : (
-                <div className="space-y-6 w-full">
+                <div className="space-y-4 w-full">
                   {stakingData.map((group, idx) => (
-                    <div key={idx} className="bg-slate-900/40 border border-slate-800/60 p-4 md:p-5 rounded-2xl w-full">
-                      <h3 className="text-sm font-bold text-emerald-400 mb-4 flex items-center gap-2">
-                        <span className="w-1.5 h-3 bg-emerald-500 rounded-full"></span>
-                        {group.exchange} <span className="text-xs font-normal text-slate-500">({group.coins.length}개 자동 수집됨)</span>
+                    <div key={idx} className="bg-slate-900/40 border border-slate-800/60 p-4 rounded-2xl w-full">
+                      <h3 className="text-xs md:text-sm font-bold text-emerald-400 mb-3 flex items-center gap-1.5">
+                        <span className="w-1 h-2.5 bg-emerald-500 rounded-full"></span>
+                        {group.exchange} 
+                        <span className="text-[11px] font-normal text-slate-500">({group.coins.length}개 자산)</span>
                       </h3>
 
-                      {/* ⚠️ 모바일에서 무조건 한 줄에 하나씩 정렬되도록 grid-cols-1 고정 */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 w-full">
+                      {/* ⚠️ 모바일(기본)에서는 1열(grid-cols-1) 배치, 화면이 커지면(sm 이상) 2열, 3열, 4열로 확장 */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 w-full">
                         {group.coins.map((coin, cIdx) => (
                           <div 
                             key={cIdx} 
-                            className="bg-slate-950/80 border border-slate-800/80 p-4 rounded-xl flex flex-col justify-between gap-3 hover:border-slate-700 transition-all shadow-md w-full"
+                            className="bg-slate-950/90 border border-slate-800/80 p-3.5 rounded-xl flex items-center justify-between gap-4 hover:border-slate-700 transition-all shadow-md w-full"
                           >
-                            {/* 상단: 코인 정보 */}
-                            <div className="flex justify-between items-center w-full">
-                              <div className="flex items-center gap-2 min-w-0">
-                                <span className="font-bold text-sm text-slate-100 shrink-0">{coin.name}</span>
-                                <span className="text-[11px] text-slate-400 font-medium truncate">
-                                  {coin.displayName}
-                                </span>
+                            {/* 왼쪽 영역: 코인 심볼 및 이름, 상태 배지 */}
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className="flex flex-col min-w-0">
+                                <div className="flex items-baseline gap-1.5">
+                                  <span className="font-black text-sm md:text-base text-slate-100 tracking-tight shrink-0">{coin.name}</span>
+                                  <span className="text-[11px] text-slate-400 font-medium truncate max-w-[70px]">
+                                    {coin.displayName}
+                                  </span>
+                                </div>
+                                <div className="mt-1">
+                                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${coin.status === "진행중" ? "bg-emerald-500/10 text-emerald-400" : "bg-amber-500/10 text-amber-400"}`}>
+                                    {coin.status}
+                                  </span>
+                                </div>
                               </div>
-                              <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded shrink-0 ${coin.status === "진행중" ? "bg-emerald-500/10 text-emerald-400" : "bg-amber-500/10 text-amber-400"}`}>
-                                {coin.status}
-                              </span>
                             </div>
 
-                            {/* 하단: 이율 정보 (모바일 대응을 위해 확실하게 하단 배치) */}
-                            <div className="flex justify-between items-center border-t border-slate-900/60 pt-2.5 mt-1 w-full">
-                              <span className="text-[10px] text-slate-500">실시간 이율</span>
-                              <span className="text-base font-black text-amber-400 font-mono tracking-tight">
+                            {/* 오른쪽 영역: 실시간 이율 데이터 */}
+                            <div className="text-right flex-shrink-0 flex flex-col justify-center">
+                              <span className="text-[9px] md:text-[10px] text-slate-500 block font-medium mb-0.5">실시간 이율</span>
+                              <span className="text-sm md:text-base font-black text-amber-400 font-mono tracking-tight">
                                 {coin.rate}
                               </span>
                             </div>
