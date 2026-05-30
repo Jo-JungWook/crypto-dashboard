@@ -527,7 +527,6 @@ export default function CryptoDashboard() {
                     거래소 보안 정책으로 인해 외부 임베딩이 제한되어 독립 고해상도 링크 패널을 운영합니다.
                   </p>
                 </div>
-
                 <div className="flex justify-center pt-2">
                   <a 
                     href="https://www.coinglass.com/ko/pro/futures/LiquidationHeatMap" 
