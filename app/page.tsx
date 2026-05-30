@@ -624,10 +624,10 @@ export default function CryptoDashboard() {
           {activePage === "staking" && (
               <section className="w-full max-w-full overflow-hidden px-4 md:px-0 space-y-6 animate-fade-in block">
                 
-                {/* 1. 최상단 헤더 타이틀: 모바일과 데스크톱 모두 최적화 크기 유지 */}
+                {/* 1. 최상단 헤더 타이틀: 한 줄 정렬 강제 고정 */}
                 <div className="w-full bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl flex justify-between items-center gap-3">
                   <div className="min-w-0 flex-1">
-                    <h2 className="text-base md:text-xl font-black text-slate-100 tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">
+                    <h2 className="text-sm sm:text-base md:text-xl font-black text-slate-100 tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">
                       ⚡ 거래소 실시간 스테이킹 현황
                     </h2>
                     <p className="text-slate-400 text-xs mt-1 hidden sm:block">
@@ -652,39 +652,35 @@ export default function CryptoDashboard() {
                       <div key={idx} className="w-full bg-slate-900/40 border border-slate-800/60 p-4 md:p-5 rounded-2xl block">
                         
                         {/* 거래소 이름 헤더 */}
-                        <h3 className="text-xs sm:text-sm font-bold text-emerald-400 mb-4 flex items-center gap-1.5">
+                        <h3 className="text-xs font-bold text-emerald-400 mb-4 flex items-center gap-1.5">
                           <span className="w-1 h-3 bg-emerald-500 rounded-full"></span>
                           {group.exchange} 
                           <span className="text-[11px] font-normal text-slate-500">({group.coins.length}개 자산)</span>
                         </h3>
 
-                        {/* ⚠️ 반응형 핵심: 모바일은 flex-col(수직 일렬), 태블릿(sm)부터 2열 -> 데스크톱(lg) 3열 -> 대화면(xl) 4열 Grid */}
-                        <div className="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 w-full">
+                        {/* ⚠️ 반응형 핵심: 모바일은 무조건 수직 배열(flex-col), md(데스크톱) 해상도 이상에서만 4열 Grid로 전환 */}
+                        <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 w-full">
                           {group.coins.map((coin, cIdx) => (
                             <div 
                               key={cIdx} 
                               className="w-full bg-slate-950/90 border border-slate-800/80 p-4 rounded-xl flex items-center justify-between gap-4 hover:border-slate-700 transition-all shadow-md"
                             >
-                              {/* 왼쪽: 코인 정보 (심볼 + 한글명 + 상태배지) */}
-                              <div className="flex flex-col min-w-0">
-                                <div className="flex items-center gap-2">
-                                  <span className="font-black text-sm text-slate-100 tracking-tight shrink-0">
-                                    {coin.name}
-                                  </span>
-                                  <span className="text-[11px] text-slate-400 font-medium truncate max-w-[80px]">
-                                    {coin.displayName}
-                                  </span>
-                                </div>
-                                <div className="mt-1.5">
-                                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded shrink-0 ${coin.status === "진행중" ? "bg-emerald-500/10 text-emerald-400" : "bg-amber-500/10 text-amber-400"}`}>
-                                    {coin.status}
-                                  </span>
-                                </div>
+                              {/* 왼쪽: 코인 정보 (가로 일렬 배치) */}
+                              <div className="flex items-center gap-2.5 min-w-0">
+                                <span className="font-black text-sm text-slate-100 tracking-tight shrink-0">
+                                  {coin.name}
+                                </span>
+                                <span className="text-[11px] text-slate-400 font-medium truncate max-w-[90px]">
+                                  {coin.displayName}
+                                </span>
+                                <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded shrink-0 ${coin.status === "진행중" ? "bg-emerald-500/10 text-emerald-400" : "bg-amber-500/10 text-amber-400"}`}>
+                                  {coin.status}
+                                </span>
                               </div>
 
-                              {/* 오른쪽: 이율 정보 (좌우 대칭 구조) */}
-                              <div className="text-right flex-shrink-0 flex flex-col justify-center">
-                                <span className="text-[10px] text-slate-500 block font-medium mb-0.5">
+                              {/* 오른쪽: 이율 정보 (좌우 대칭 정렬 고정) */}
+                              <div className="text-right flex-shrink-0 flex items-center gap-3">
+                                <span className="text-[10px] text-slate-500 font-medium">
                                   실시간 이율
                                 </span>
                                 <span className="text-base font-black text-amber-400 font-mono tracking-tight">
