@@ -725,22 +725,32 @@ export default function CryptoDashboard() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 {group.coins.map((coin, cIdx) => (
-                  <div key={cIdx} className="bg-slate-950/80 border border-slate-800/80 p-4 rounded-xl flex justify-between items-center hover:border-slate-700 transition-all shadow-md">
-                    <div>
-                      <div className="flex items-center gap-1.5">
-                        <span className="font-bold text-sm text-slate-100">{coin.name}</span>
-                        <span className="text-[11px] text-slate-400 font-medium">{coin.displayName}</span>
-                      </div>
-                      <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded mt-2 inline-block ${coin.status === "진행중" ? "bg-emerald-500/10 text-emerald-400" : "bg-amber-500/10 text-amber-400"}`}>
-                        {coin.status}
+                <div 
+                  key={cIdx} 
+                  className="bg-slate-950/80 border border-slate-800/80 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-slate-700 transition-all shadow-md"
+                >
+                  {/* 코인 이름 및 심볼 영역 */}
+                  <div className="flex justify-between sm:justify-start items-center sm:items-start sm:flex-col gap-2 sm:gap-1.5">
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-bold text-sm text-slate-100 min-w-[45px]">{coin.name}</span>
+                      <span className="text-[11px] text-slate-400 font-medium truncate max-w-[80px]">
+                        {coin.displayName}
                       </span>
                     </div>
-                    <div className="text-right">
-                      <span className="text-[10px] text-slate-500 block">실시간 이율</span>
-                      <span className="text-base font-black text-amber-400 font-mono tracking-tight">{coin.rate}</span>
-                    </div>
+                    <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${coin.status === "진행중" ? "bg-emerald-500/10 text-emerald-400" : "bg-amber-500/10 text-amber-400"}`}>
+                      {coin.status}
+                    </span>
                   </div>
-                ))}
+
+                  {/* 실시간 이율 영역 */}
+                  <div className="flex justify-between sm:flex-col items-center sm:items-end border-t border-slate-900 sm:border-t-0 pt-2 sm:pt-0">
+                    <span className="text-[10px] text-slate-500 block">실시간 이율</span>
+                    <span className="text-base font-black text-amber-400 font-mono tracking-tight">
+                      {coin.rate}
+                    </span>
+                  </div>
+                </div>
+              ))}
               </div>
             </div>
           ))}
