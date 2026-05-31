@@ -199,13 +199,14 @@ export default function CryptoDashboard() {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768); // 768px 미만일 때 모바일 뷰 활성화
-    };
-    handleResize(); // 최초 실행
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+      const handleResize = () => {
+        // 1024px 미만은 뷰어 프로그램 환경을 고려해 무조건 모바일 리스트 뷰로 강제 전환
+        setIsMobile(window.innerWidth < 1024); 
+      };
+      handleResize(); // 최초 실행
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }, []);
   
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50 p-4 md:p-6 font-sans pb-40 flex flex-col items-center overflow-y-auto relative">
@@ -714,7 +715,7 @@ export default function CryptoDashboard() {
                     {/* ------------------------------------------------------------- */}
                     {/* 💻 [데스크톱 전용 레이아웃] 모바일(기본)에선 완벽 숨김(hidden), md 이상에서만 grid 활성화 */}
                     {/* ------------------------------------------------------------- */}
-                    <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 w-full">
+                    <div className="hidden lg:grid lg:grid-cols-3 xl:grid-cols-4 gap-3 w-full">
                       {group.coins.map((coin, cIdx) => (
                         <div 
                           key={cIdx} 
