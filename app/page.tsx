@@ -235,7 +235,12 @@ export default function CryptoDashboard() {
         <header className="flex justify-between items-center mb-6 border-b border-slate-800 pb-5">
           <div className="flex items-center gap-3">
             <button onClick={() => setIsMenuOpen(true)} className="p-2 hover:bg-slate-900 border border-slate-800 rounded-xl text-slate-200 transition-all focus:scale-95"><Menu className="w-5 h-5" /></button>
-            <div className="flex items-center gap-2"><img src="/logo.png" alt="로고" className="w-8 h-8 md:w-9 md:h-9 object-contain rounded-lg" /><h1 className="text-xl md:text-2xl font-bold tracking-tight">전업코인부자 대시보드</h1></div>
+            <div className="flex items-center gap-2 min-w-0 flex-1 sm:flex-initial">
+              <img src="/logo.png" alt="로고" className="w-7 h-7 md:w-9 md:h-9 object-contain rounded-lg shrink-0" />
+              <h1 className="text-sm sm:text-base md:text-2xl font-black tracking-tight text-slate-100 whitespace-nowrap overflow-hidden text-ellipsis">
+                전업코인부자 대시보드
+              </h1>
+            </div>
           </div>
           <div className="flex items-center gap-2 text-xs text-emerald-500 font-mono bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
             <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
