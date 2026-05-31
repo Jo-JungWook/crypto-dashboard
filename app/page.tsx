@@ -195,17 +195,15 @@ export default function CryptoDashboard() {
     }
   }, [activePage]);
 
-  //  함수 시작 직후 최상단에 붙여넣으세요
+//  [이 코드로 교체]
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    // 브라우저 화면 크기를 체크하는 함수
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 1024); // 1024px 미만은 무조건 모바일로 취급
+      setIsMobile(window.innerWidth < 768); // 768px 미만일 때 모바일 뷰 활성화
     };
-    
     handleResize(); // 최초 실행
-    window.addEventListener("resize", handleResize); // 화면 크기 변경 감지
+    window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
   
@@ -712,17 +710,6 @@ export default function CryptoDashboard() {
       )}
     </section>
   )}
-        </main>
-      </div>
-
-      {/* 하단 제어 바 */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900/90 backdrop-blur-md border border-slate-800 px-4 py-2.5 rounded-2xl flex items-center gap-3 shadow-2xl z-50">
-        <button onClick={() => setViewMode("desktop")} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold ${viewMode === "desktop" ? "bg-emerald-500 text-slate-950" : "bg-slate-800 text-slate-400"}`}><Monitor className="w-3.5 h-3.5" /> 데스크톱</button>
-        <button onClick={() => setViewMode("tablet")} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold ${viewMode === "tablet" ? "bg-emerald-500 text-slate-950" : "bg-slate-800 text-slate-400"}`}><Tablet className="w-3.5 h-3.5" /> 태블릿</button>
-        <button onClick={() => setViewMode("mobile")} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold ${viewMode === "mobile" ? "bg-emerald-500 text-slate-950" : "bg-slate-800 text-slate-400"}`}><Smartphone className="w-3.5 h-3.5" /> 모바일</button>
-      </div>
-    </div>
-  );
   {activePage === "staking" && (
     <section className="w-full max-w-full overflow-hidden px-4 md:px-0 space-y-6 animate-fade-in block">
       
@@ -837,4 +824,15 @@ export default function CryptoDashboard() {
       )}
     </section>
   )}
+        </main>
+      </div>
+
+      {/* 하단 제어 바 */}
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900/90 backdrop-blur-md border border-slate-800 px-4 py-2.5 rounded-2xl flex items-center gap-3 shadow-2xl z-50">
+        <button onClick={() => setViewMode("desktop")} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold ${viewMode === "desktop" ? "bg-emerald-500 text-slate-950" : "bg-slate-800 text-slate-400"}`}><Monitor className="w-3.5 h-3.5" /> 데스크톱</button>
+        <button onClick={() => setViewMode("tablet")} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold ${viewMode === "tablet" ? "bg-emerald-500 text-slate-950" : "bg-slate-800 text-slate-400"}`}><Tablet className="w-3.5 h-3.5" /> 태블릿</button>
+        <button onClick={() => setViewMode("mobile")} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold ${viewMode === "mobile" ? "bg-emerald-500 text-slate-950" : "bg-slate-800 text-slate-400"}`}><Smartphone className="w-3.5 h-3.5" /> 모바일</button>
+      </div>
+    </div>
+  );
 }
