@@ -633,197 +633,121 @@ export default function CryptoDashboard() {
               </section>
             </>
           )}
-          {activePage === "staking" && (
-    <section className="w-full max-w-full overflow-hidden px-4 md:px-0 space-y-6 animate-fade-in block">
-      
-      {/* 1. 최상단 헤더 타이틀 */}
-      <div className="w-full bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl flex justify-between items-center gap-3">
-        <div className="min-w-0 flex-1">
-          <h2 className="text-base md:text-xl font-black text-slate-100 tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">
-            ⚡ 거래소 실시간 스테이킹 현황
-          </h2>
-          <p className="text-slate-400 text-xs mt-1 hidden sm:block">
-            실시간으로 거래소 마켓 API를 조회하여 최신 데이터를 자동 수집합니다.
-          </p>
-        </div>
-        <div className="flex-shrink-0 flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1.5 rounded-full">
-          <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping"></span>
-          <span className="text-[10px] font-bold text-emerald-400 tracking-wider">LIVE</span>
-        </div>
-      </div>
-
-      {/* 로딩 영역 또는 카드 리스트 */}
-      {isLoading ? (
-        <div className="w-full text-center py-16 bg-slate-900/20 border border-slate-800/40 rounded-2xl">
-          <div className="w-6 h-6 border-3 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-          <p className="text-xs text-slate-400">마켓 데이터를 가져오는 중입니다...</p>
-        </div>
-      ) : (
-        <div className="w-full space-y-6 block">
-          {stakingData.map((group, idx) => (
-            <div key={idx} className="w-full bg-slate-900/40 border border-slate-800/60 p-4 md:p-5 rounded-2xl block">
-              
-              {/* 거래소 이름 헤더 */}
-              <h3 className="text-xs sm:text-sm font-bold text-emerald-400 mb-4 flex items-center gap-1.5">
-                <span className="w-1 h-3 bg-emerald-500 rounded-full"></span>
-                {group.exchange} 
-                <span className="text-[11px] font-normal text-slate-500">({group.coins.length}개 자산)</span>
-              </h3>
-
-              {/* ⚠️ 반응형 구조: 모바일은 한 줄로 쌓이는 flex-col 구조 유지 / md(데스크톱) 이상에서만 기존 4열 Grid로 쫙 펴짐 */}
-              <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 w-full">
-                {group.coins.map((coin, cIdx) => (
-                  <div 
-                    key={cIdx} 
-                    className="w-full bg-slate-950/90 border border-slate-800/80 p-3 md:p-4 rounded-xl flex items-center justify-between gap-4 hover:border-slate-700 transition-all shadow-md"
-                  >
-                    {/* [왼쪽 구역] 코인 상세 정보: 모바일에서 가로로 쭉 나열됨 (스크린샷 형태) */}
-                    <div className="flex items-center gap-2.5 min-w-0 flex-1 sm:flex-initial">
-                      <span className="font-black text-sm text-white tracking-tight shrink-0 min-w-[42px]">
-                        {coin.name}
-                      </span>
-                      <span className="text-xs text-slate-400 font-medium truncate max-w-[75px] shrink-0">
-                        {coin.displayName}
-                      </span>
-                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded shrink-0 ${coin.status === "진행중" ? "bg-emerald-500/10 text-emerald-400" : "bg-amber-500/10 text-amber-400"}`}>
-                        {coin.status}
-                      </span>
-                    </div>
-
-                    {/* [오른쪽 구역] 이율 정보: 글자와 숫자가 나란히 붙어 우측 정렬 (스크린샷 형태) */}
-                    <div className="flex items-center gap-2 flex-shrink-0 text-right">
-                      <span className="text-[10px] text-slate-500 font-medium whitespace-nowrap hidden min-[360px]:block">
-                        실시간 이율
-                      </span>
-                      <span className="text-sm md:text-base font-black text-amber-400 font-mono tracking-tight">
-                        {coin.rate}
-                      </span>
-                    </div>
-
-                  </div>
-                ))}
+          
+        {activePage === "staking" && (
+          <section className="w-full max-w-full overflow-hidden px-4 md:px-0 space-y-6 animate-fade-in block">
+            
+            {/* 1. 최상단 헤더 타이틀: 뷰어 크기가 작아지면 글자 크기를 극단적으로 줄여 무조건 한 줄 고정 */}
+            <div className="w-full bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl flex justify-between items-center gap-3">
+              <div className="min-w-0 flex-1">
+                <h2 className="text-xs sm:text-base md:text-xl font-black text-slate-100 tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">
+                  ⚡ 거래소 실시간 스테이킹 현황
+                </h2>
+                <p className="text-slate-400 text-xs mt-1 hidden sm:block">
+                  실시간으로 거래소 마켓 API를 조회하여 최신 데이터를 자동 수집합니다.
+                </p>
               </div>
-
+              <div className="flex-shrink-0 flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1.5 rounded-full">
+                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping"></span>
+                <span className="text-[10px] font-bold text-emerald-400 tracking-wider">LIVE</span>
+              </div>
             </div>
-          ))}
-        </div>
-      )}
-    </section>
-  )}
-  {activePage === "staking" && (
-    <section className="w-full max-w-full overflow-hidden px-4 md:px-0 space-y-6 animate-fade-in block">
-      
-      {/* 1. 최상단 헤더 타이틀: 뷰어 크기가 작아지면 글자 크기를 극단적으로 줄여 무조건 한 줄 고정 */}
-      <div className="w-full bg-slate-900/40 border border-slate-800/60 p-4 md:p-6 rounded-2xl flex justify-between items-center gap-3">
-        <div className="min-w-0 flex-1">
-          <h2 className="text-xs sm:text-base md:text-xl font-black text-slate-100 tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">
-            ⚡ 거래소 실시간 스테이킹 현황
-          </h2>
-          <p className="text-slate-400 text-xs mt-1 hidden sm:block">
-            실시간으로 거래소 마켓 API를 조회하여 최신 데이터를 자동 수집합니다.
-          </p>
-        </div>
-        <div className="flex-shrink-0 flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1.5 rounded-full">
-          <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping"></span>
-          <span className="text-[10px] font-bold text-emerald-400 tracking-wider">LIVE</span>
-        </div>
-      </div>
 
-      {/* 로딩 영역 또는 카드 리스트 */}
-      {isLoading ? (
-        <div className="w-full text-center py-16 bg-slate-900/20 border border-slate-800/40 rounded-2xl">
-          <div className="w-6 h-6 border-3 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-          <p className="text-xs text-slate-400">마켓 데이터를 가져오는 중입니다...</p>
-        </div>
-      ) : (
-        <div className="w-full space-y-6 block">
-          {stakingData.map((group, idx) => (
-            <div key={idx} className="w-full bg-slate-900/40 border border-slate-800/60 p-4 md:p-5 rounded-2xl block">
-              
-              {/* 거래소 이름 헤더 */}
-              <h3 className="text-xs font-bold text-emerald-400 mb-4 flex items-center gap-1.5">
-                <span className="w-1 h-3 bg-emerald-500 rounded-full"></span>
-                {group.exchange} 
-                <span className="text-[11px] font-normal text-slate-500">({group.coins.length}개 자산)</span>
-              </h3>
+            {/* 로딩 영역 또는 카드 리스트 */}
+            {isLoading ? (
+              <div className="w-full text-center py-16 bg-slate-900/20 border border-slate-800/40 rounded-2xl">
+                <div className="w-6 h-6 border-3 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+                <p className="text-xs text-slate-400">마켓 데이터를 가져오는 중입니다...</p>
+              </div>
+            ) : (
+              <div className="w-full space-y-6 block">
+                {stakingData.map((group, idx) => (
+                  <div key={idx} className="w-full bg-slate-900/40 border border-slate-800/60 p-4 md:p-5 rounded-2xl block">
+                    
+                    {/* 거래소 이름 헤더 */}
+                    <h3 className="text-xs font-bold text-emerald-400 mb-4 flex items-center gap-1.5">
+                      <span className="w-1 h-3 bg-emerald-500 rounded-full"></span>
+                      {group.exchange} 
+                      <span className="text-[11px] font-normal text-slate-500">({group.coins.length}개 자산)</span>
+                    </h3>
 
-              {/* ------------------------------------------------------------- */}
-              {/* 📱 [모바일 전용 레이아웃] md 해상도 미만(기본)일 때 작동, 데스크톱(md:)에선 완벽 숨김 */}
-              {/* ------------------------------------------------------------- */}
-              <div className="flex flex-col gap-2.5 w-full md:hidden">
-                {group.coins.map((coin, cIdx) => (
-                  <div 
-                    key={cIdx} 
-                    className="w-full bg-slate-950/90 border border-slate-800/80 p-3 rounded-xl flex items-center justify-between gap-4 shadow-md"
-                  >
-                    {/* 모바일 왼쪽: 코인 기본 정보 나열 */}
-                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                      <span className="font-black text-sm text-white tracking-tight shrink-0 min-w-[42px]">
-                        {coin.name}
-                      </span>
-                      <span className="text-xs text-slate-400 font-medium truncate max-w-[85px] shrink-0">
-                        {coin.displayName}
-                      </span>
-                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded shrink-0 ${coin.status === "진행중" ? "bg-emerald-500/10 text-emerald-400" : "bg-amber-500/10 text-amber-400"}`}>
-                        {coin.status}
-                      </span>
+                    {/* ------------------------------------------------------------- */}
+                    {/* 📱 [모바일 전용 레이아웃] md 해상도 미만(기본)일 때 작동, 데스크톱(md:)에선 완벽 숨김 */}
+                    {/* ------------------------------------------------------------- */}
+                    <div className="flex flex-col gap-2.5 w-full md:hidden">
+                      {group.coins.map((coin, cIdx) => (
+                        <div 
+                          key={cIdx} 
+                          className="w-full bg-slate-950/90 border border-slate-800/80 p-3 rounded-xl flex items-center justify-between gap-4 shadow-md"
+                        >
+                          {/* 모바일 왼쪽: 코인 기본 정보 나열 */}
+                          <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                            <span className="font-black text-sm text-white tracking-tight shrink-0 min-w-[42px]">
+                              {coin.name}
+                            </span>
+                            <span className="text-xs text-slate-400 font-medium truncate max-w-[85px] shrink-0">
+                              {coin.displayName}
+                            </span>
+                            <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded shrink-0 ${coin.status === "진행중" ? "bg-emerald-500/10 text-emerald-400" : "bg-amber-500/10 text-amber-400"}`}>
+                              {coin.status}
+                            </span>
+                          </div>
+
+                          {/* 모바일 오른쪽: 이율 정보 가로로 밀착 */}
+                          <div className="flex items-center gap-2 flex-shrink-0 text-right">
+                            <span className="text-[10px] text-slate-500 font-medium whitespace-nowrap hidden min-[360px]:block">
+                              실시간 이율
+                            </span>
+                            <span className="text-sm font-black text-amber-400 font-mono tracking-tight">
+                              {coin.rate}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
                     </div>
 
-                    {/* 모바일 오른쪽: 이율 정보 가로로 밀착 */}
-                    <div className="flex items-center gap-2 flex-shrink-0 text-right">
-                      <span className="text-[10px] text-slate-500 font-medium whitespace-nowrap hidden min-[360px]:block">
-                        실시간 이율
-                      </span>
-                      <span className="text-sm font-black text-amber-400 font-mono tracking-tight">
-                        {coin.rate}
-                      </span>
+                    {/* ------------------------------------------------------------- */}
+                    {/* 💻 [데스크톱 전용 레이아웃] 모바일(기본)에선 완벽 숨김(hidden), md 이상에서만 grid 활성화 */}
+                    {/* ------------------------------------------------------------- */}
+                    <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 w-full">
+                      {group.coins.map((coin, cIdx) => (
+                        <div 
+                          key={cIdx} 
+                          className="w-full bg-slate-950/90 border border-slate-800/80 p-5 rounded-xl flex items-center justify-between gap-4 hover:border-slate-700 transition-all shadow-md"
+                        >
+                          <div className="flex flex-col min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="font-black text-base text-slate-100 tracking-tight shrink-0">
+                                {coin.name}
+                              </span>
+                              <span className="text-xs text-slate-400 font-medium truncate max-w-[90px]">
+                                {coin.displayName}
+                              </span>
+                            </div>
+                            <div className="mt-2">
+                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded shrink-0 ${coin.status === "진행중" ? "bg-emerald-500/10 text-emerald-400" : "bg-amber-500/10 text-amber-400"}`}>
+                                {coin.status}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="text-right flex-shrink-0 flex flex-col justify-center">
+                            <span className="text-[10px] text-slate-500 block font-medium mb-0.5">
+                              실시간 이율
+                            </span>
+                            <span className="text-lg font-black text-amber-400 font-mono tracking-tight">
+                              {coin.rate}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
                     </div>
+
                   </div>
                 ))}
               </div>
-
-              {/* ------------------------------------------------------------- */}
-              {/* 💻 [데스크톱 전용 레이아웃] 모바일(기본)에선 완벽 숨김(hidden), md 이상에서만 grid 활성화 */}
-              {/* ------------------------------------------------------------- */}
-              <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 w-full">
-                {group.coins.map((coin, cIdx) => (
-                  <div 
-                    key={cIdx} 
-                    className="w-full bg-slate-950/90 border border-slate-800/80 p-5 rounded-xl flex items-center justify-between gap-4 hover:border-slate-700 transition-all shadow-md"
-                  >
-                    <div className="flex flex-col min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="font-black text-base text-slate-100 tracking-tight shrink-0">
-                          {coin.name}
-                        </span>
-                        <span className="text-xs text-slate-400 font-medium truncate max-w-[90px]">
-                          {coin.displayName}
-                        </span>
-                      </div>
-                      <div className="mt-2">
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded shrink-0 ${coin.status === "진행중" ? "bg-emerald-500/10 text-emerald-400" : "bg-amber-500/10 text-amber-400"}`}>
-                          {coin.status}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="text-right flex-shrink-0 flex flex-col justify-center">
-                      <span className="text-[10px] text-slate-500 block font-medium mb-0.5">
-                        실시간 이율
-                      </span>
-                      <span className="text-lg font-black text-amber-400 font-mono tracking-tight">
-                        {coin.rate}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-            </div>
-          ))}
-        </div>
-      )}
-    </section>
-  )}
+            )}
+          </section>
+        )}
         </main>
       </div>
 
