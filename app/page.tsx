@@ -216,8 +216,10 @@ export default function CryptoDashboard() {
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 transition-all duration-300 flex justify-start">
           <div className="w-72 bg-slate-900 border-r border-slate-800 h-full p-6 flex flex-col shadow-2xl">
             <div className="flex justify-between items-center pb-4 border-b border-slate-800 mb-6">
-              <div className="flex items-center gap-2"><img src="/logo.png" className="w-7 h-7 rounded" alt="로고" /><span className="font-bold text-sm text-slate-200">전업코인부자 내비</span></div>
-              <button onClick={() => setIsMenuOpen(false)} className="p-1 hover:bg-slate-800 rounded text-slate-400"><X className="w-5 h-5" /></button>
+              <div className="bg-slate-900/80 border border-slate-800 px-2.5 py-1 rounded-full shrink-0 flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                <span className="text-[10px] font-black text-emerald-400 tracking-wider font-mono">LIVE</span>
+              </div>
             </div>
             <nav className="space-y-2">
               <button onClick={() => { setActivePage("dashboard"); setIsMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${activePage === "dashboard" ? "bg-emerald-500 text-slate-950" : "text-slate-300 hover:bg-slate-800"}`}><LayoutDashboard className="w-4 h-4" /> 매크로 종합 대시보드</button>
@@ -243,9 +245,9 @@ export default function CryptoDashboard() {
               </h1>
             </div>
           </div>
-          <div className="flex items-center gap-2 text-xs text-emerald-500 font-mono bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
-            <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-            {activePage === "dashboard" ? "MACRO" : "ON-CHAIN"}
+          <div className="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full shrink-0">
+            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+            <span className="text-[10px] font-black text-emerald-400 tracking-wider font-mono">LIVE</span>
           </div>
         </header>
 
@@ -653,9 +655,9 @@ export default function CryptoDashboard() {
                     실시간으로 거래소 마켓 API를 조회하여 최신 데이터를 자동 수집합니다.
                   </p>
                 </div>
-                <div className="flex-shrink-0 flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1.5 rounded-full">
-                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping"></span>
-                  <span className="text-[10px] font-bold text-emerald-400 tracking-wider">LIVE</span>
+                <div className="flex-shrink-0 flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded-full">
+                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                  <span className="text-[10px] font-black text-emerald-400 tracking-wider font-mono">LIVE</span>
                 </div>
               </div>
 
